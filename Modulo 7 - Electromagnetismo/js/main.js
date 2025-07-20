@@ -80,7 +80,7 @@ function render(){
     filtered.forEach((ex,i)=>{
       const a = document.createElement('a');
       // encodeURIComponent para soportar espacios, acentos, paréntesis, símbolos
-      a.href = `./examenes/${encodeURIComponent(ex.file)}`;
+      a.href = `./Examenes/${encodeURIComponent(ex.file)}`;
       a.className = 'card fade-in';
       a.style.animationDelay = (i * 0.05)+'s';
       a.setAttribute('aria-label', `Abrir examen ${ex.titulo}`);
