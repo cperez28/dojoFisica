@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>Conversión de Expresiones Escritas a Vector</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>Conversión de Expresiones Escritas a Vector</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  {
+    "q": "Un objeto se desplaza 3 m hacia el norte y luego 4 m hacia el este. ¿Cuál es el vector desplazamiento total en forma cartesiana?",
+    "options": [
+      "(3, 4)",
+      "(4, 3)",
+      "(−3, 4)",
+      "(3, −4)",
+      "(4, −3)"
+    ],
+    "answer": 1,
+    "explanation": "Norte = eje y, Este = eje x ⇒ vector = (4, 3) m."
+  },
+  {
+    "q": "Un automóvil acelera 5 m/s² hacia el oeste. ¿Cómo se representa el vector de aceleración en el eje x?",
+    "options": [
+      "(5, 0)",
+      "(−5, 0)",
+      "(0, 5)",
+      "(0, −5)",
+      "(5, 5)"
+    ],
+    "answer": 1,
+    "explanation": "Oeste es negativo en eje x ⇒ aceleración = (−5, 0)."
+  },
+  {
+    "q": "Un proyectil es lanzado con velocidad inicial de 30 m/s a 60° sobre la horizontal. ¿Cuál es el vector velocidad en componentes (x, y)?",
+    "options": [
+      "(15, 25.98)",
+      "(30, 0)",
+      "(25.98, 15)",
+      "(0, 30)",
+      "(10, 20)"
+    ],
+    "answer": 2,
+    "explanation": "vx = 30 cos(60°) ≈ 15, vy = 30 sin(60°) ≈ 25.98 ⇒ (15, 25.98)."
+  },
+  {
+    "q": "Un avión vuela 250 km al noreste. ¿Cuál es el vector si N es y y E es x?",
+    "options": [
+      "(250, 0)",
+      "(0, 250)",
+      "(177, 177)",
+      "(−177, 177)",
+      "(250, 250)"
+    ],
+    "answer": 2,
+    "explanation": "Noreste forma 45° ⇒ componentes iguales ⇒ 250 cos(45°) ≈ 177 ⇒ (177, 177)."
+  },
+  {
+    "q": "Una fuerza de 10 N actúa hacia el suroeste. ¿Cómo se representa en forma vectorial?",
+    "options": [
+      "(−7.07, −7.07)",
+      "(7.07, −7.07)",
+      "(−10, −10)",
+      "(0, −10)",
+      "(−5, −5)"
+    ],
+    "answer": 0,
+    "explanation": "Suroeste = 225°, componentes iguales y negativas ⇒ 10 cos(45°) ≈ 7.07 ⇒ (−7.07, −7.07)."
+  },
+  {
+    "q": "Una velocidad de 20 m/s apunta 30° por encima del eje x. ¿Cuáles son sus componentes?",
+    "options": [
+      "(10, 10√3)",
+      "(17.32, 10)",
+      "(10, 17.32)",
+      "(20, 0)",
+      "(0, 20)"
+    ],
+    "answer": 1,
+    "explanation": "vx = 20 cos(30°) ≈ 17.32, vy = 20 sin(30°) ≈ 10 ⇒ (17.32, 10)."
+  },
+  {
+    "q": "Una fuerza apunta directamente al sur con magnitud 8 N. ¿Cómo se expresa como vector?",
+    "options": [
+      "(0, −8)",
+      "(0, 8)",
+      "(8, 0)",
+      "(−8, 0)",
+      "(−8, −8)"
+    ],
+    "answer": 0,
+    "explanation": "Sur = eje y negativo ⇒ vector = (0, −8)."
+  },
+  {
+    "q": "Un nadador cruza un río con corriente al este. Su velocidad relativa al agua es al norte. ¿Cómo se representa su movimiento neto?",
+    "options": [
+      "(v_agua, v_nadador)",
+      "(v_nadador, v_agua)",
+      "(0, 0)",
+      "(−v_agua, v_nadador)",
+      "(v_agua, −v_nadador)"
+    ],
+    "answer": 0,
+    "explanation": "Corriente = eje x, nado = eje y ⇒ (vx, vy) = (v_agua, v_nadador)."
+  },
+  {
+    "q": "Un objeto es empujado con 6 N a 60° del eje x positivo. ¿Cuál es el vector fuerza?",
+    "options": [
+      "(3, 5.2)",
+      "(5.2, 3)",
+      "(6, 0)",
+      "(0, 6)",
+      "(−5.2, 3)"
+    ],
+    "answer": 1,
+    "explanation": "F = (6 cos(60°), 6 sin(60°)) ≈ (3, 5.2)."
+  },
+  {
+    "q": "Un cohete acelera con 12 m/s² a 135°. ¿Cuál es la representación vectorial?",
+    "options": [
+      "(−8.49, 8.49)",
+      "(−12, 0)",
+      "(8.49, −8.49)",
+      "(0, 12)",
+      "(−12, 12)"
+    ],
+    "answer": 0,
+    "explanation": "135° ⇒ 45° desde el eje negativo x ⇒ componentes iguales y opuestas ⇒ (−8.49, 8.49)."
+  },
+  {
+    "q": "Una velocidad de 50 m/s apunta directamente hacia el noroeste. ¿Cómo se expresa en vectores?",
+    "options": [
+      "(−35.36, 35.36)",
+      "(−50, 50)",
+      "(35.36, −35.36)",
+      "(50, 50)",
+      "(−25, 25)"
+    ],
+    "answer": 0,
+    "explanation": "Noroeste = 135° ⇒ componentes negativas en x y positivas en y ⇒ 50 cos(45°) ≈ 35.36."
+  },
+  {
+    "q": "Una pelota se lanza con 10 m/s a 180°. ¿Vector velocidad?",
+    "options": [
+      "(−10, 0)",
+      "(10, 0)",
+      "(0, 10)",
+      "(0, −10)",
+      "(10, 10)"
+    ],
+    "answer": 0,
+    "explanation": "180° = dirección oeste ⇒ eje x negativo ⇒ (−10, 0)."
+  },
+  {
+    "q": "Una fuerza de 20 N apunta 45° bajo el eje x. ¿Vector fuerza?",
+    "options": [
+      "(14.14, −14.14)",
+      "(−14.14, −14.14)",
+      "(14.14, 14.14)",
+      "(0, −20)",
+      "(−20, 0)"
+    ],
+    "answer": 0,
+    "explanation": "45° bajo el eje x = componentes positivas en x y negativas en y ⇒ (14.14, −14.14)."
+  },
+  {
+    "q": "Un corredor gira hacia el norte con velocidad 8 m/s. ¿Cómo se representa eso?",
+    "options": [
+      "(0, 8)",
+      "(0, −8)",
+      "(8, 0)",
+      "(−8, 0)",
+      "(−8, −8)"
+    ],
+    "answer": 0,
+    "explanation": "Norte = eje y positivo ⇒ vector = (0, 8)."
+  },
+  {
+    "q": "Una aceleración de 4 m/s² es dirigida a 270°. ¿Vector aceleración?",
+    "options": [
+      "(0, −4)",
+      "(0, 4)",
+      "(4, 0)",
+      "(−4, 0)",
+      "(−4, −4)"
+    ],
+    "answer": 0,
+    "explanation": "270° = sur ⇒ eje y negativo ⇒ (0, −4)."
+  },
+  {
+    "q": "Una fuerza de 15 N está 120° respecto al eje x. ¿Vector?",
+    "options": [
+      "(−7.5, 12.99)",
+      "(−12.99, 7.5)",
+      "(7.5, −12.99)",
+      "(0, 15)",
+      "(15, 0)"
+    ],
+    "answer": 1,
+    "explanation": "F = (15 cos(120°), 15 sin(120°)) ≈ (−7.5, 12.99)."
+  },
+  {
+    "q": "Una partícula se mueve con 10 m/s en dirección 315°. ¿Vector velocidad?",
+    "options": [
+      "(7.07, −7.07)",
+      "(−7.07, −7.07)",
+      "(−7.07, 7.07)",
+      "(7.07, 7.07)",
+      "(10, 10)"
+    ],
+    "answer": 0,
+    "explanation": "315° = 45° bajo eje x ⇒ componentes positivas en x, negativas en y."
+  },
+  {
+    "q": "Una corriente de aire sopla con 5 m/s hacia el sureste. ¿Vector velocidad?",
+    "options": [
+      "(3.54, −3.54)",
+      "(−3.54, −3.54)",
+      "(−5, −5)",
+      "(5, 0)",
+      "(0, −5)"
+    ],
+    "answer": 0,
+    "explanation": "Sureste = 315° ⇒ 45° bajo eje x ⇒ (5 cos(45°), −5 sin(45°)) ≈ (3.54, −3.54)."
+  },
+  {
+    "q": "Una persona empuja un carrito con fuerza de 7 N al noreste. ¿Vector fuerza?",
+    "options": [
+      "(4.95, 4.95)",
+      "(−4.95, 4.95)",
+      "(7, 0)",
+      "(0, 7)",
+      "(−7, 7)"
+    ],
+    "answer": 0,
+    "explanation": "Noreste = 45° ⇒ componentes iguales y positivas ⇒ 7 cos(45°) ≈ 4.95."
+  },
+  {
+    "q": "Una partícula desacelera con vector opuesto a su velocidad inicial (10, 5) m/s. ¿Aceleración?",
+    "options": [
+      "(−10, −5)",
+      "(10, 5)",
+      "(−5, 10)",
+      "(−5, −10)",
+      "(5, −10)"
+    ],
+    "answer": 0,
+    "explanation": "Dirección opuesta a velocidad ⇒ invertir los signos ⇒ (−10, −5)."
+  }
+];
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>

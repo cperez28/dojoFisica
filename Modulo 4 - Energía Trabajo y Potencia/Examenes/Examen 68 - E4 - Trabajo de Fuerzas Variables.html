@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>Trabajo de Fuerzas Variables</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>E4: Trabajo de Fuerza Variable</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>E
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  {
+    "q": "1. (Conceptual) Para una fuerza variable unidimensional F(x) aplicada a lo largo del eje x, el trabajo al mover de x1 a x2 se define como:",
+    "options": [
+      "W = F(x2)(x2 − x1)",
+      "W = (F(x1)+F(x2))/2 · (x2 − x1)",
+      "W = ∫_{x1}^{x2} F(x) dx",
+      "W = dF/dx · (x2 − x1)",
+      "W = F(x1) / (x2 − x1)"
+    ],
+    "answer": 2,
+    "explanation": "Definición general: W = ∫ F(x) dx. Las otras son aproximaciones o expresiones incorrectas."
+  },
+  {
+    "q": "2. (Gráfico) El área bajo la curva en un gráfico F vs x entre x = a y x = b representa:",
+    "options": [
+      "Impulso",
+      "Energía potencial absoluta",
+      "Trabajo realizado por la fuerza en ese intervalo",
+      "Potencia media",
+      "Cambio de momento angular"
+    ],
+    "answer": 2,
+    "explanation": "El área bajo F–x es ∫ F dx = trabajo."
+  },
+  {
+    "q": "3. (Triángulo) F aumenta linealmente de 0 a 12 N entre x=0 y x=4 m. Trabajo en ese tramo:",
+    "options": [
+      "12 J",
+      "18 J",
+      "24 J",
+      "30 J",
+      "48 J"
+    ],
+    "answer": 2,
+    "explanation": "Área triángulo: (1/2)·base·altura = 0.5·4·12 = 24 J."
+  },
+  {
+    "q": "4. (Trapecio) F es lineal de 8 N (x=0) a 14 N (x=3) y luego constante en 14 N hasta x=5 m. Trabajo total 0→5 m:",
+    "options": [
+      "55 J",
+      "58 J",
+      "61 J",
+      "64 J",
+      "70 J"
+    ],
+    "answer": 2,
+    "explanation": "Tramo 1 (trapecio): (8+14)/2·3=33 J; tramo 2 (rectángulo):14·2=28 J; total 61 J."
+  },
+  {
+    "q": "5. (Integral simple) F(x)=5x (N). Trabajo de x=0 a x=3 m:",
+    "options": [
+      "15 J",
+      "20 J",
+      "22.5 J",
+      "25 J",
+      "30 J"
+    ],
+    "answer": 2,
+    "explanation": "∫0^3 5x dx = 5·(x²/2)|0^3 = 5·(9/2)=22.5 J."
+  },
+  {
+    "q": "6. (F lineal con término constante) F(x)=4+2x (N). Trabajo de x=1 a x=4 m:",
+    "options": [
+      "21 J",
+      "24 J",
+      "27 J",
+      "30 J",
+      "33 J"
+    ],
+    "answer": 2,
+    "explanation": "∫ (4+2x) dx = 4x + x². Evaluar 1→4: (16+16)-(4+1)=32-5=27 J."
+  },
+  {
+    "q": "7. (Potencia de x) F(x)=3x² (N). Trabajo de x=0 a x=2 m:",
+    "options": [
+      "4 J",
+      "6 J",
+      "8 J",
+      "10 J",
+      "12 J"
+    ],
+    "answer": 2,
+    "explanation": "∫0^2 3x² dx = 3·(x³/3)|0^2 = 8 J."
+  },
+  {
+    "q": "8. (Inverso k) F(x)=k x. El trabajo para comprimir de 0 a 0.30 m es 2.70 J. k = ?",
+    "options": [
+      "30 N/m",
+      "40 N/m",
+      "50 N/m",
+      "60 N/m",
+      "75 N/m"
+    ],
+    "answer": 3,
+    "explanation": "W = ½ k x² ⇒ k = 2W/x² = 5.4/0.09 = 60 N/m."
+  },
+  {
+    "q": "9. (Inverso b) F(x)=a+ b x con a=5 N. Trabajo 0→2 m es 40 J. b = ?",
+    "options": [
+      "10 N/m",
+      "12 N/m",
+      "15 N/m",
+      "18 N/m",
+      "20 N/m"
+    ],
+    "answer": 2,
+    "explanation": "W = aΔx + ½ b Δx² = 5·2 + ½ b ·4 = 10 +2 b = 40 ⇒ b=15 N/m."
+  },
+  {
+    "q": "10. (F_equiv) F(x)=40 x (N/m·m). Trabajo 0→0.50 m es 5 J. Fuerza constante equivalente (misma W en Δx):",
+    "options": [
+      "5 N",
+      "8 N",
+      "10 N",
+      "15 N",
+      "20 N"
+    ],
+    "answer": 2,
+    "explanation": "F_avg = W/Δx = 5 / 0.5 = 10 N (también (0+20)/2)."
+  },
+  {
+    "q": "11. (Conservatividad 1D) En 1D toda fuerza dependiente solo de x:",
+    "options": [
+      "Es conservativa",
+      "Es no conservativa",
+      "Requiere bucles para decidir",
+      "No puede derivar de potencial",
+      "Tiene trabajo cero siempre"
+    ],
+    "answer": 0,
+    "explanation": "En 1D se puede definir U(x)=−∫F dx; camino único ⇒ conservativa."
+  },
+  {
+    "q": "12. (ΔU de F(x)) F(x)=−6x (N). Diferencia de energía potencial U(2)−U(0) (elige U(0)=0):",
+    "options": [
+      "−12 J",
+      "+12 J",
+      "+6 J",
+      "−6 J",
+      "0 J"
+    ],
+    "answer": 1,
+    "explanation": "F=−dU/dx ⇒ dU/dx=6x ⇒ U=3x². U(2)=12 J."
+  },
+  {
+    "q": "13. (ΔU general) F(x)=−(4+2x). Calcular U(3)−U(1):",
+    "options": [
+      "8 J",
+      "12 J",
+      "16 J",
+      "18 J",
+      "20 J"
+    ],
+    "answer": 2,
+    "explanation": "dU/dx=4+2x ⇒ U=4x + x². ΔU=(12+9)-(4+1)=21−5=16 J."
+  },
+  {
+    "q": "14. (Gráfico lineal) En un gráfico F vs x para un resorte ideal, la pendiente numérica representa:",
+    "options": [
+      "1/k",
+      "k",
+      "F·x",
+      "x/F",
+      "k²"
+    ],
+    "answer": 1,
+    "explanation": "F = k x ⇒ pendiente = k."
+  },
+  {
+    "q": "15. (Error factor 2) Al calcular el trabajo de F=kx entre 0 y x, un estudiante usa W = k x². El error es:",
+    "options": [
+      "Debe multiplicar por 2",
+      "Debe dividir por 2: W correcto = ½ k x²",
+      "Debe usar k/x",
+      "Debe usar k x³",
+      "W debe ser cero"
+    ],
+    "answer": 1,
+    "explanation": "Integral da ½ k x²; omitió el factor 1/2."
+  },
+  {
+    "q": "16. (Área negativa) En un gráfico F vs x, una porción del área queda bajo el eje (F<0). Eso significa:",
+    "options": [
+      "Trabajo adicional positivo",
+      "Trabajo negativo (la fuerza extrae energía)",
+      "Fuerza inexistente",
+      "Potencia infinita",
+      "La fuerza es conservativa solo ahí"
+    ],
+    "answer": 1,
+    "explanation": "Área bajo eje: contribución negativa al trabajo."
+  },
+  {
+    "q": "17. (F variable + fricción) F(x)=10+2x (N); fricción constante 5 N opuesta. Trabajo neto 0→3 m:",
+    "options": [
+      "18 J",
+      "21 J",
+      "24 J",
+      "27 J",
+      "39 J"
+    ],
+    "answer": 2,
+    "explanation": "W_F=∫(10+2x)dx=39 J; W_f=−15 J ⇒ W_net=24 J."
+  },
+  {
+    "q": "18. (Determinar parámetros) Una recta F(x)=a+ b x pasa por (0,2 N) y (4,10 N). (a, b) =",
+    "options": [
+      "(2 N, 1 N/m)",
+      "(2 N, 2 N/m)",
+      "(4 N, 2 N/m)",
+      "(2 N, 4 N/m)",
+      "(4 N, 1 N/m)"
+    ],
+    "answer": 1,
+    "explanation": "b = (10−2)/4 = 2 N/m; a = 2 N."
+  },
+  {
+    "q": "19. (Tabla → trabajo) Tabla: x(m): 0,1,2,3; F(N): 4,6,5,3. Aproxima W 0→3 m (regla trapezoidal).",
+    "options": [
+      "13.5 J",
+      "14.5 J",
+      "15.0 J",
+      "16.0 J",
+      "18.0 J"
+    ],
+    "answer": 1,
+    "explanation": "W≈(Δx/2)[F0+2F1+2F2+F3]=(1/2)(4+12+10+3)=14.5 J."
+  },
+  {
+    "q": "20. (Ida y vuelta) Objeto sometido a F=kx (resorte ideal) se mueve cuasiestáticamente de x=0 a x=A y regresa a x=0. Trabajo NETO del resorte:",
+    "options": [
+      "+½ k A²",
+      "−½ k A²",
+      "0",
+      "+k A²",
+      "Depende de la masa"
+    ],
+    "answer": 2,
+    "explanation": "Fuerza conservativa: el trabajo en el ciclo es cero."
+  },
+  {
+    "q": "21. (Dimensiones) En F(x)=a + b x las unidades correctas de a y b son:",
+    "options": [
+      "a: N, b: N/m",
+      "a: N/m, b: N",
+      "a: J, b: N",
+      "a: N, b: N·m",
+      "a: N/m², b: N/m"
+    ],
+    "answer": 0,
+    "explanation": "Para sumar: ambos términos deben tener unidades de N ⇒ b x en N ⇒ b en N/m."
+  },
+  {
+    "q": "22. (De potencial a fuerza) Dado U(x)=2 x³ (J), la fuerza correspondiente F(x) es:",
+    "options": [
+      "F=6x²",
+      "F=−6x²",
+      "F=−2x³",
+      "F=−2x²",
+      "F=6x"
+    ],
+    "answer": 1,
+    "explanation": "F=−dU/dx=−6x²."
+  },
+  {
+    "q": "23. (Cambio de signo) F(x)=12−3x (N). ¿En qué x se anula la fuerza?",
+    "options": [
+      "x=2 m",
+      "x=3 m",
+      "x=4 m",
+      "x=5 m",
+      "Nunca"
+    ],
+    "answer": 2,
+    "explanation": "12−3x=0 ⇒ x=4 m."
+  },
+  {
+    "q": "24. (x_max con energía) F=kx, k=50 N/m. Máxima elongación para que el trabajo no exceda 5.0 J (desde x=0):",
+    "options": [
+      "0.32 m",
+      "0.40 m",
+      "0.45 m",
+      "0.50 m",
+      "0.60 m"
+    ],
+    "answer": 2,
+    "explanation": "½ k x² ≤ 5 ⇒ x ≤ √(2·5/50)=√0.2≈0.447 m."
+  },
+  {
+    "q": "25. (Rectángulo + triángulo) F=8 N de 0→1 m y luego desciende lineal a 0 N en x=3 m. Trabajo 0→3 m:",
+    "options": [
+      "12 J",
+      "14 J",
+      "16 J",
+      "18 J",
+      "20 J"
+    ],
+    "answer": 2,
+    "explanation": "Área rectángulo:8·1=8; triángulo:½·2·8=8; total 16 J."
+  },
+  {
+    "q": "26. (Promedio para lineal) F(x)=4+2x. Fuerza promedio en x=1→5 m:",
+    "options": [
+      "8 N",
+      "9 N",
+      "10 N",
+      "11 N",
+      "12 N"
+    ],
+    "answer": 2,
+    "explanation": "F_avg = (1/(x2−x1))∫ F dx = 40/4 =10 N (verificando integral)."
+  },
+  {
+    "q": "27. (Resistencia requerida) F_drive(x)=12 + x (N) 0→3 m. ¿F_res constante necesaria para que W_net=0?",
+    "options": [
+      "10.5 N",
+      "11.5 N",
+      "12.5 N",
+      "13.5 N",
+      "15.0 N"
+    ],
+    "answer": 3,
+    "explanation": "W_drive=∫(12+x)dx= [12x + x²/2]_0^3=36+4.5=40.5 J. F_res=40.5 /3=13.5 N."
+  },
+  {
+    "q": "28. (Potencial a partir de F) F(x)=−(2x+1). Una forma posible de U(x) es:",
+    "options": [
+      "U = x² + x + C",
+      "U = −x² − x + C",
+      "U = 2x + 1 + C",
+      "U = −2x² − x + C",
+      "U = x³ + C"
+    ],
+    "answer": 0,
+    "explanation": "dU/dx=2x+1 ⇒ U= x² + x + C."
+  },
+  {
+    "q": "29. (Error de aproximación) F(x)=6x². Trabajo 2→5 m correcto:",
+    "options": [
+      "126 J",
+      "180 J",
+      "210 J",
+      "234 J",
+      "252 J"
+    ],
+    "answer": 3,
+    "explanation": "∫2^5 6x² dx = 6·(x³/3)| = 2(125−8)=234 J. Usar F(5)Δx daría 6·25·3=450 (incorrecto)."
+  },
+  {
+    "q": "30. (Piecewise mixto) F(x)=10 N para 0≤x<2 m; luego crece linealmente de 10 a 30 N entre x=2 y x=4 m. Trabajo 0→4 m:",
+    "options": [
+      "40 J",
+      "50 J",
+      "55 J",
+      "60 J",
+      "65 J"
+    ],
+    "answer": 3,
+    "explanation": "Primero: 10·2=20 J. Segundo (trapecio): (10+30)/2·2=40 J. Total 60 J."
+  }
+];
+// NOTA: Verifica si deseas una versión “pulida” que corrija el ítem 25 (respuesta debe ser 4)
+// y uniformizar algunas palabras. Puedo entregar versión pulida si respondes “pulir drag”.
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

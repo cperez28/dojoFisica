@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>Trabajo y Teorema Trabajo Energia</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>E1: Trabajo y Teorema Trabajo Energia</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  {
+    "q": "1. (Definición) ¿Cuál es la expresión correcta para el trabajo realizado por una fuerza constante que forma ángulo θ con el desplazamiento d?",
+    "options": [
+      "W = F d",
+      "W = F d / θ",
+      "W = F d cos θ",
+      "W = F d sin θ",
+      "W = (F / d) cos θ"
+    ],
+    "answer": 2,
+    "explanation": "Trabajo escalar: W = F d cos θ."
+  },
+  {
+    "q": "2. (Signo) Una fuerza de 40 N actúa mientras el bloque se desplaza 6.0 m con ángulo de 120° respecto a la fuerza. ¿Trabajo?",
+    "options": [
+      "+120 J",
+      "−120 J",
+      "+240 J",
+      "−240 J",
+      "0 J"
+    ],
+    "answer": 1,
+    "explanation": "W = 40·6·cos120° = 240·(−0.5) = −120 J."
+  },
+  {
+    "q": "3. (Fuerzas que no trabajan) ¿Qué fuerza NO realiza trabajo sobre un bloque que se desliza horizontalmente (altura constante, sin aire)?",
+    "options": [
+      "Fricción cinética",
+      "Empuje horizontal",
+      "Peso",
+      "Fuerza elástica horizontal",
+      "Fuerza aplicada oblicua"
+    ],
+    "answer": 2,
+    "explanation": "El peso es perpendicular al desplazamiento horizontal ⇒ W = 0."
+  },
+  {
+    "q": "4. (Producto escalar) F = (6 i + 8 j) N y Δr = (3 i − 2 j) m. ¿Trabajo realizado?",
+    "options": [
+      "2 J",
+      "10 J",
+      "22 J",
+      "−2 J",
+      "0 J"
+    ],
+    "answer": 0,
+    "explanation": "F·Δr = 6·3 + 8·(−2) = 18 − 16 = 2 J."
+  },
+  {
+    "q": "5. (Numérico) Se aplica F = 30 N a 25° sobre la horizontal sobre 8.0 m sin fricción. ¿Trabajo de la fuerza?",
+    "options": [
+      "180 J",
+      "200 J",
+      "218 J",
+      "240 J",
+      "260 J"
+    ],
+    "answer": 2,
+    "explanation": "W = 30·8·cos25° ≈ 217.4 ≈ 218 J."
+  },
+  {
+    "q": "6. (W_net = ΔK) Bloque de 4.0 kg parte a 2.0 m/s. Fuerza 20 N (→) actúa 3.0 m contra fricción 5.0 N. ¿Rapidez final?",
+    "options": [
+      "3.5 m/s",
+      "4.2 m/s",
+      "4.8 m/s",
+      "5.15 m/s",
+      "5.6 m/s"
+    ],
+    "answer": 3,
+    "explanation": "W_net = (20−5)·3 = 45 J. K_i = 8 J ⇒ K_f = 53 J ⇒ v = √(2·53/4) ≈ 5.15 m/s."
+  },
+  {
+    "q": "7. (Segmentos) Fuerza constante 10 N en +x. Desplazamiento: 4 m en +x y luego 3 m en +y. Trabajo total de la fuerza.",
+    "options": [
+      "0 J",
+      "30 J",
+      "40 J",
+      "50 J",
+      "70 J"
+    ],
+    "answer": 2,
+    "explanation": "Solo tramo paralelo contribuye: W = 10·4 = 40 J."
+  },
+  {
+    "q": "8. (Ángulo) Misma F y d. ¿Qué ángulo entre fuerza y desplazamiento produce el mayor trabajo positivo?",
+    "options": [
+      "0°",
+      "30°",
+      "60°",
+      "90°",
+      "120°"
+    ],
+    "answer": 0,
+    "explanation": "W ∝ cosθ máximo a θ = 0°."
+  },
+  {
+    "q": "9. (Trabajo negativo) Bloque se mueve 5 m a la derecha; fuerza de 12 N a la izquierda. Trabajo de esa fuerza.",
+    "options": [
+      "+60 J",
+      "−60 J",
+      "+12 J",
+      "−12 J",
+      "0 J"
+    ],
+    "answer": 1,
+    "explanation": "Ángulo 180° ⇒ W = −12·5 = −60 J."
+  },
+  {
+    "q": "10. (Proyectil) ¿Cuál fuerza realiza trabajo neto NO nulo sobre un proyectil en vuelo ideal entre dos puntos a la misma altura (sin aire)?",
+    "options": [
+      "Peso",
+      "Fuerza normal",
+      "Una fuerza de empuje horizontal constante",
+      "Ninguna de las anteriores",
+      "Fricción del aire"
+    ],
+    "answer": 3,
+    "explanation": "Única fuerza real es el peso; entre alturas iguales su trabajo neto es cero ⇒ ninguna produce trabajo neto distinto de cero."
+  },
+  {
+    "q": "11. (Inverso) Bloque de 3 kg pasa de reposo a 6.0 m/s en 5.0 m por una única fuerza constante. ¿Magnitud de la fuerza?",
+    "options": [
+      "5.4 N",
+      "10.8 N",
+      "18 N",
+      "21.6 N",
+      "32 N"
+    ],
+    "answer": 1,
+    "explanation": "ΔK = ½·3·36 = 54 J = F·5 ⇒ F = 10.8 N."
+  },
+  {
+    "q": "12. (Error) Estudiante usa W = F d sin θ. Corrige.",
+    "options": [
+      "Debe ser W = F d cos θ",
+      "Debe ser W = F² d",
+      "Debe ser W = F d / θ",
+      "Debe ser W = F d tan θ",
+      "Debe ser W = −F d sin θ"
+    ],
+    "answer": 0,
+    "explanation": "Trabajo = componente paralela F cosθ por d."
+  },
+  {
+    "q": "13. (Trabajo cero) ¿Trabajo de la fuerza centrípeta sobre un objeto en movimiento circular uniforme ideal?",
+    "options": [
+      "Positivo",
+      "Negativo",
+      "Cero",
+      "Variable y siempre >0",
+      "Infinito"
+    ],
+    "answer": 2,
+    "explanation": "F centrípeta ⟂ v instantánea ⇒ W = 0."
+  },
+  {
+    "q": "14. (Elección de método) Para hallar v final con F constante y desplazamiento conocido sin tiempo:",
+    "options": [
+      "Usar v = v0 + a t",
+      "Integrar F respecto al tiempo",
+      "Aplicar W_net = ΔK",
+      "Aplicar conservación incluyendo fricción ficticia",
+      "Balance de momento lineal"
+    ],
+    "answer": 2,
+    "explanation": "W_net = F d = ΔK evita calcular t."
+  },
+  {
+    "q": "15. (Comparación ángulo) Empuje horizontal vs empuje a 30° (misma F, sin fricción). ¿Relación de trabajos?",
+    "options": [
+      "W_horizontal > W_30°",
+      "W_horizontal = W_30°",
+      "W_horizontal < W_30°",
+      "Depende de la masa",
+      "Depende de la distancia"
+    ],
+    "answer": 0,
+    "explanation": "Componente paralela menor con ángulo ⇒ menor trabajo."
+  },
+  {
+    "q": "16. (Camino ida-vuelta) Fuerza constante 18 N en +x: tramo +x de 2.0 m y regreso −x 2.0 m. Trabajo total.",
+    "options": [
+      "0 J",
+      "18 J",
+      "36 J",
+      "−18 J",
+      "−36 J"
+    ],
+    "answer": 0,
+    "explanation": "Desplazamiento neto cero ⇒ W=0."
+  },
+  {
+    "q": "17. (F–x triangular) F aumenta linealmente 0→20 N sobre 0→2 m. Trabajo en ese intervalo.",
+    "options": [
+      "10 J",
+      "20 J",
+      "30 J",
+      "40 J",
+      "80 J"
+    ],
+    "answer": 1,
+    "explanation": "Área triángulo: ½·2·20 = 20 J."
+  },
+  {
+    "q": "18. (F–x escalonada) F = 12 N de 0 a 1.5 m y luego 4 N de 1.5 a 3.0 m (misma dirección). Trabajo total.",
+    "options": [
+      "18 J",
+      "24 J",
+      "26 J",
+      "30 J",
+      "36 J"
+    ],
+    "answer": 1,
+    "explanation": "W = 12·1.5 + 4·1.5 = 18 + 6 = 24 J."
+  },
+  {
+    "q": "19. (Gráfico) El área bajo la curva en un gráfico F vs desplazamiento representa:",
+    "options": [
+      "Impulso",
+      "Potencia",
+      "Trabajo",
+      "Energía potencial absoluta",
+      "Momento lineal"
+    ],
+    "answer": 2,
+    "explanation": "∫ F dx = trabajo."
+  },
+  {
+    "q": "20. (Trayectoria cerrada) Trabajo de una única fuerza constante cuando el objeto regresa al punto inicial (sin otros efectos).",
+    "options": [
+      "Positivo",
+      "Negativo",
+      "Cero",
+      "Indefinido",
+      "Depende de la masa"
+    ],
+    "answer": 2,
+    "explanation": "Desplazamiento neto = 0 ⇒ W=0."
+  },
+  {
+    "q": "21. (Orden de magnitud) Empujar un libro con F≈2 N sobre 1 m. Trabajo aproximado:",
+    "options": [
+      "0.2 J",
+      "2 J",
+      "20 J",
+      "200 J",
+      "2000 J"
+    ],
+    "answer": 1,
+    "explanation": "W ≈ 2·1 = 2 J."
+  },
+  {
+    "q": "22. (ΔK) Masa 1.0 kg pasa de 3.0 m/s a 7.0 m/s. Trabajo neto realizado.",
+    "options": [
+      "10 J",
+      "14 J",
+      "16 J",
+      "20 J",
+      "24 J"
+    ],
+    "answer": 3,
+    "explanation": "ΔK = ½·1·(49−9)=20 J."
+  },
+  {
+    "q": "23. (Desde trabajo a a) Bloque 2 kg: trabajo neto 30 J sobre 5.0 m desde reposo (F constante). ¿Aceleración?",
+    "options": [
+      "3.0 m/s²",
+      "3.5 m/s²",
+      "4.0 m/s²",
+      "4.5 m/s²",
+      "5.0 m/s²"
+    ],
+    "answer": 0,
+    "explanation": "ΔK = 30 J ⇒ v² = 2ΔK/m = 30. v² = 2 a d ⇒ 30 = 2 a 5 ⇒ a = 3.0 m/s²."
+  },
+  {
+    "q": "24. (Sin desplazamiento) Una fuerza grande se aplica pero el objeto no se mueve. El trabajo de esa fuerza es:",
+    "options": [
+      "Muy positivo",
+      "Muy negativo",
+      "Cero",
+      "Indefinido",
+      "Igual al cambio de energía potencial"
+    ],
+    "answer": 2,
+    "explanation": "W = F·0 = 0."
+  },
+  {
+    "q": "25. (Normal) Bloque arrastrado a velocidad constante con fuerza a 30° (hay fricción). Trabajo de la normal sobre distancia d:",
+    "options": [
+      "+N d",
+      "−N d",
+      "Cero",
+      "Igual al de la fricción",
+      "No determinable"
+    ],
+    "answer": 2,
+    "explanation": "Normal ⟂ desplazamiento ⇒ trabajo cero."
+  },
+  {
+    "q": "26. (Suma de trabajos) Fuerzas: F1=10 N derecha, F2=4 N izquierda, fricción=2 N izquierda. Recorre 5 m. Trabajo neto:",
+    "options": [
+      "0 J",
+      "20 J",
+      "30 J",
+      "40 J",
+      "50 J"
+    ],
+    "answer": 1,
+    "explanation": "F_net = 10−4−2=4 N ⇒ W = 4·5 = 20 J."
+  },
+  {
+    "q": "27. (Trabajo negativo garantizado) ¿Cuál fuerza de la lista siempre realiza trabajo negativo sobre el objeto mientras se desplaza?",
+    "options": [
+      "Fricción cinética",
+      "Empuje paralelo al desplazamiento",
+      "Peso durante la caída",
+      "Tensión en la dirección del movimiento",
+      "Fuerza perpendicular"
+    ],
+    "answer": 0,
+    "explanation": "Fricción se opone al movimiento ⇒ trabajo negativo."
+  },
+  {
+    "q": "28. (Tabla de tramos) Tramo A: F=6 N, d=2 m; Tramo B: F=10 N, d=1 m; Tramo C: F=0 N, d=3 m. Trabajo total.",
+    "options": [
+      "16 J",
+      "18 J",
+      "20 J",
+      "22 J",
+      "24 J"
+    ],
+    "answer": 3,
+    "explanation": "W = 6·2 + 10·1 = 12 + 10 = 22 J."
+  },
+  {
+    "q": "29. (Consistencia) Cálculo por fuerzas da a=2.0 m/s²; bloque 2 kg recorre 5 m desde reposo ⇒ v²=2·2·5=20 ⇒ ΔK=20 J. Análisis experimental reporta 22 J de trabajo neto. La evaluación correcta es:",
+    "options": [
+      "Consistente",
+      "Inconsistente: debería ser 20 J",
+      "Inconsistente: debería ser 10 J",
+      "Inconsistente: ΔK=0",
+      "No evaluable"
+    ],
+    "answer": 1,
+    "explanation": "Modelo predice 20 J; 22 J excede el valor ⇒ inconsistencia."
+  },
+  {
+    "q": "30. (Plausibilidad) Se afirma que un estudiante hizo 5.0×10^5 J empujando suavemente una caja ligera 4 m. La mejor evaluación:",
+    "options": [
+      "Plausible",
+      "Requiere masa para decidir",
+      "Inverosímil: orden de magnitud demasiado grande",
+      "Correcto: cualquier empuje produce ese trabajo",
+      "Indeterminado sin coeficiente de fricción"
+    ],
+    "answer": 2,
+    "explanation": "5×10^5 J es muy grande para un desplazamiento corto (energía comparable a subir ~50 kg mil metros)."
+  }
+];
+// 'answer' es el índice (0 = primera opción).
+
+// NOTA: Verifica si deseas una versión “pulida” que corrija el ítem 25 (respuesta debe ser 4)
+// y uniformizar algunas palabras. Puedo entregar versión pulida si respondes “pulir drag”.
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+
+
+
+
+

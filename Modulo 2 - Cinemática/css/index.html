@@ -1,0 +1,73 @@
+<!-- =============================================================
+ MÓDULO: Cinemática
+ Archivos generados: index.html y js/data.js (plantilla) + nota de uso con main.js reutilizado.
+ Paleta diferenciada (azules) respecto a Cantidades Físicas.
+============================================================= -->
+
+=============================================================
+1) /cinematica/index.html
+=============================================================
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cinemática – Índice de Exámenes</title>
+  <meta name="description" content="Índice de exámenes de Cinemática: MRU, MRUA, movimientos 2D, parábolico, circular, relativo y análisis gráfico." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Puedes reutilizar el mismo base.css del otro módulo o clonar y ajustar colores.
+       Aquí asumo que copiaste base.css dentro de /cinematica/css/base.css y modificaste
+       sólo las variables del :root (ver sección más abajo). -->
+  <link rel="stylesheet" href="./css/base.css" />
+  <style>
+    /* Ajuste rápido de paleta (override) si reutilizas el mismo base.css sin editarlo.
+       Si ya editaste las variables dentro de base.css para este módulo, puedes borrar este bloque. */
+    :root {
+      --primary:#2563EB;          /* Azul principal Cinemática */
+      --primary-rgb:37,99,235;
+      --accent1:#06B6D4;          /* Cyan */
+      --accent2:#F59E0B;          /* Amber para contrastes */
+      --accent3:#F43F5E;          /* Rose secundario */
+      --gradient-hero:linear-gradient(120deg,var(--primary) 0%,var(--accent1) 55%,var(--accent2) 100%);
+    }
+    html[data-theme="dark"] {
+      --gradient-hero:linear-gradient(120deg,#1e3a8a 0%,#0e7490 55%,#b45309 100%);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero-content">
+      <h1>Cinemática</h1>
+      <p>Explora los fundamentos del movimiento: desplazamiento, velocidad, aceleración, trayectorias, movimiento circular y relativo.</p>
+      <div class="hero-actions">
+        <input id="search" type="search" placeholder="Buscar (ej. MRU, parabólico, circular...)" aria-label="Buscar exámenes" autocomplete="off" />
+        <button class="toggle-theme" id="toggleTheme" aria-label="Cambiar modo de color">🌙 Modo</button>
+      </div>
+      <div class="chips" id="chips" aria-label="Filtros de categorías"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="count" id="count">Mostrando 0 de 0</div>
+    </div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2025 Cinemática · Versión 1.0</span>
+      <span class="credito">Creado por <strong>Ing. Cristino Pérez</strong></span>
+    </div>
+  </footer>
+
+  <!-- Scripts: reutilizamos main.js genérico ya existente en el otro módulo -->
+  <script src="./js/data.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
+
+<!-- Nota: Si usas el mismo main.js de Cantidades Físicas funcionará sin cambios.
+     SÓLO asegúrate de que data.js se cargue antes que main.js. -->

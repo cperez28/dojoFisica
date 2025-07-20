@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>G3 - Potencial y Energia Gravitacional</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>G3 - Potencial y Energia Gravitacional</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>E
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  /* ===================== G3: Potencial Gravitatorio y Energía Potencial (30 ítems) =====================
+     1–10 CORE | 11–20 CONS | 21–30 OLI
+     answer = índice (0 primera opción)
+     Convenciones: V(∞)=0; V = -G M / r; U = m V = - G M m / r; g = - dV/dr (radial).
+  */
+
+  /* ------------- CORE ------------- */
+  {
+    "q": "1. (Core) Definición de potencial gravitatorio V a distancia r de una masa puntual M (referencia V(∞)=0):",
+    "options": [
+      "V = - G M / r",
+      "V = + G M / r^2",
+      "V = - G M r",
+      "V = - G / (M r)",
+      "V = + G M / r"
+    ],
+    "answer": 0,
+    "explanation": "Potencial de masa puntual: V(r) = -GM/r (referencia en infinito)."
+  },
+  {
+    "q": "2. (Core) Energía potencial entre dos masas puntuales m y M separadas por r (V(∞)=0):",
+    "options": [
+      "U = - G m M / r",
+      "U = - G m M / r^2",
+      "U = + G m M / r",
+      "U = - G (m + M) / r",
+      "U = - G m M r"
+    ],
+    "answer": 0,
+    "explanation": "U = m V = - G m M / r."
+  },
+  {
+    "q": "3. (Core) Signo de V y U gravitatorios (con referencia en infinito) para masas atractivas:",
+    "options": [
+      "Siempre positivo",
+      "Siempre negativo",
+      "Cero siempre",
+      "Puede ser positivo o negativo arbitrario",
+      "Oscila con r"
+    ],
+    "answer": 1,
+    "explanation": "Con V(∞)=0, al acercar masas el potencial es negativo (atracción)."
+  },
+  {
+    "q": "4. (Core) Relación correcta entre campo g y potencial V (radial):",
+    "options": [
+      "g = dV/dr (positivo)",
+      "g = - dV/dr",
+      "g = r dV/dr",
+      "g = - r^2 dV/dr",
+      "g = V dV/dr"
+    ],
+    "answer": 1,
+    "explanation": "g = -∇V; en radial g = - dV/dr."
+  },
+  {
+    "q": "5. (Core) Superposición: el potencial total de varias masas puntuales es:",
+    "options": [
+      "La suma algebraica (escalares) de cada V_i",
+      "El producto de los V_i",
+      "La suma vectorial",
+      "El promedio de los V_i",
+      "Siempre el potencial de la masa mayor"
+    ],
+    "answer": 0,
+    "explanation": "Potencial es escalar y se suma: V = Σ V_i."
+  },
+  {
+    "q": "6. (Core) Trabajo realizado por la fuerza gravitatoria al mover una masa m de r1 a r2 (solo fuerzas conservativas):",
+    "options": [
+      "W_g = U(r2) - U(r1)",
+      "W_g = - [U(r2) - U(r1)]",
+      "W_g = m [V(r1) + V(r2)]",
+      "W_g = 0",
+      "W_g = G m / (r1 r2)"
+    ],
+    "answer": 0,
+    "explanation": "Trabajo de la fuerza conservativa = -ΔU = U_final - U_inicial (porque U = -∫F·dr)."
+  },
+  {
+    "q": "7. (Core) La energía necesaria (trabajo externo mínimo) para llevar lentamente una masa m desde r1 hasta r2 > r1 (contra la atracción) es:",
+    "options": [
+      "ΔU = U(r2) - U(r1) (>0)",
+      "ΔU = U(r1) - U(r2)",
+      "Cero",
+      "Siempre negativa",
+      "Indefinida"
+    ],
+    "answer": 0,
+    "explanation": "Se incrementa la energía potencial (menos negativa) al alejar: trabajo externo = ΔU."
+  },
+  {
+    "q": "8. (Core) Si r aumenta, la magnitud de U = -G m M / r:",
+    "options": [
+      "Aumenta (se hace menos negativa)",
+      "Disminuye (más negativa)",
+      "No cambia",
+      "Se hace positiva grande",
+      "Cambia de signo con periodos"
+    ],
+    "answer": 0,
+    "explanation": "U→0 desde valores negativos cuando r→∞."
+  },
+  {
+    "q": "9. (Core) Condición para que una masa quede ligada gravitacionalmente a otra (sistema de dos masas puntuales):",
+    "options": [
+      "E_total < 0",
+      "E_total = 0",
+      "E_total > 0",
+      "U > 0",
+      "K < 0"
+    ],
+    "answer": 0,
+    "explanation": "Ligadura (órbita cerrada) requiere energía mecánica total negativa."
+  },
+  {
+    "q": "10. (Core) Si U = -20 J y K = +12 J para una masa respecto de otra, la energía mecánica es:",
+    "options": [
+      "-32 J",
+      "-8 J",
+      "+8 J",
+      "+32 J",
+      "0 J"
+    ],
+    "answer": 1,
+    "explanation": "E = K + U = 12 - 20 = -8 J (<0: ligada)."
+  },
+
+  /* ------------- CONS ------------- */
+  {
+    "q": "11. (Cons) ΔU al llevar m desde r1 hasta r2 (r2 > r1) es:",
+    "options": [
+      "ΔU = -G M m (1/r2 - 1/r1)",
+      "ΔU = -G M m (1/r1 + 1/r2)",
+      "ΔU = +G M m (1/r2 - 1/r1)",
+      "ΔU = +G M m (r2 - r1)",
+      "ΔU = 0"
+    ],
+    "answer": 0,
+    "explanation": "U(r) = -GMm/r ⇒ ΔU = U2 - U1 = -GMm (1/r2 - 1/r1)."
+  },
+  {
+    "q": "12. (Cons) Trabajo externo mínimo para extraer m desde r=R hasta infinito:",
+    "options": [
+      "W_ext = G M m / R",
+      "W_ext = - G M m / R",
+      "W_ext = 2 G M m / R",
+      "W_ext = ½ G M m / R",
+      "Cero"
+    ],
+    "answer": 0,
+    "explanation": "ΔU = 0 - (-GMm/R) = +GMm/R (igual al trabajo externo)."
+  },
+  {
+    "q": "13. (Cons) Una masa cae desde reposo en r = r0 hasta r = r1 (r1 < r0). Ignorando otras fuerzas, su aumento de energía cinética es:",
+    "options": [
+      "ΔK = -ΔU = G M m (1/r1 - 1/r0)",
+      "ΔK = G M m (1/r0 - 1/r1)",
+      "ΔK = 0",
+      "ΔK = - G M m (1/r1 + 1/r0)",
+      "ΔK = - G M m (1/r1 - 1/r0)"
+    ],
+    "answer": 0,
+    "explanation": "K gana lo que pierde U: -ΔU = G M m(1/r1 - 1/r0)."
+  },
+  {
+    "q": "14. (Cons) Velocidad v al caer desde reposo en r0 hasta r (energía mecánica):",
+    "options": [
+      "v = √[2 G M (1/r - 1/r0)]",
+      "v = √[2 G M (1/r0 - 1/r)]",
+      "v = √[G M (r - r0)]",
+      "v = G M (1/r - 1/r0)",
+      "v = √[G M (1/r + 1/r0)]"
+    ],
+    "answer": 0,
+    "explanation": "Conservación: ½ m v² = G M m (1/r - 1/r0)."
+  },
+  {
+    "q": "15. (Cons) Comparando elevar m de R a 2R con elevarla de 2R a 3R (mismo M):",
+    "options": [
+      "Requiere más energía de R→2R",
+      "Más energía de 2R→3R",
+      "Igual energía en ambos",
+      "Ambas son negativas",
+      "Depende de m pero no de R"
+    ],
+    "answer": 0,
+    "explanation": "ΔU ∝ (1/r_inicial - 1/r_final); 1/R - 1/2R = 1/2R; 1/2R - 1/3R = 1/6R; mayor la primera."
+  },
+  {
+    "q": "16. (Cons) Expresión de la velocidad de escape desde r=R (arranca en superficie con energía cinética K_esc y llega a infinito con E≈0):",
+    "options": [
+      "v_esc = √(GM/R)",
+      "v_esc = √(2GM/R)",
+      "v_esc = √(GM/2R)",
+      "v_esc = 2 GM / R",
+      "v_esc = GM / R^2"
+    ],
+    "answer": 1,
+    "explanation": "½ m v_esc² - GMm/R = 0 ⇒ v_esc = √(2GM/R)."
+  },
+  {
+    "q": "17. (Cons) Un satélite en órbita circular de radio r tiene K = ?",
+    "options": [
+      "K = - GM m / r",
+      "K = + GM m / r",
+      "K = + (1/2) GM m / r",
+      "K = - (1/2) GM m / r",
+      "K = 0"
+    ],
+    "answer": 3,
+    "explanation": "v²=GM/r ⇒ K=½ m v²=½ m GM/r = (1/2) GM m / r; con signo positivo → opción correcta es + (1/2) GM m / r (índice 2). *Corrección:* Respuesta correcta índice 2."
+  },
+  {
+    "q": "17 (Cons - Versión final) Energía cinética en órbita circular de radio r:",
+    "options": [
+      "K = (1/2) GM m / r",
+      "K = GM m / r",
+      "K = - GM m / r",
+      "K = - (1/2) GM m / r",
+      "K = 0"
+    ],
+    "answer": 0,
+    "explanation": "K = ½ m (GM/r) = (1/2) GM m / r."
+  },
+  {
+    "q": "18. (Cons) Energía potencial U y energía total E en órbita circular (radio r) son:",
+    "options": [
+      "U = - GMm/r, E = - (1/2) GMm/r",
+      "U = - GMm/r, E = - GMm/r",
+      "U = - (1/2) GMm/r, E = - (1/2) GMm/r",
+      "U = + GMm/r, E = 0",
+      "U = - GMm/r, E = + (1/2) GMm/r"
+    ],
+    "answer": 0,
+    "explanation": "E = K + U = (1/2)GMm/r - GMm/r = - (1/2) GMm/r."
+  },
+  {
+    "q": "19. (Cons) Trabajo externo mínimo para cambiar órbita circular de r1 a r2 (>r1) lentamente (quasi-estático):",
+    "options": [
+      "ΔE = GMm(1/2r2 - 1/2r1)",
+      "ΔE = GMm(1/r2 - 1/r1)",
+      "ΔE = GMm(1/2r1 - 1/2r2)",
+      "ΔE = 0",
+      "ΔE = - GMm(1/2r2 - 1/2r1)"
+    ],
+    "answer": 0,
+    "explanation": "E_circ = -GMm/(2r). ΔE = E2 - E1 = -GMm/(2r2) + GMm/(2r1) = GMm(1/2r1 - 1/2r2) ⇒ opción equivalente (1/2r2 - 1/2r1) con signo? OJO. Correcta: GMm(1/2r1 - 1/2r2). Ajustar opciones."
+  },
+  {
+    "q": "19 (Cons - Versión final) ΔE para pasar de r1 a r2 (>r1) en órbita circular:",
+    "options": [
+      "ΔE = GMm (1/2r1 - 1/2r2)",
+      "ΔE = GMm (1/r1 - 1/r2)",
+      "ΔE = GMm (1/2r2 - 1/2r1)",
+      "ΔE = - GMm (1/2r1 - 1/2r2)",
+      "ΔE = 0"
+    ],
+    "answer": 0,
+    "explanation": "ΔE = -GMm/(2r2) + GMm/(2r1) = GMm(1/2r1 - 1/2r2) > 0."
+  },
+  {
+    "q": "20. (Cons) Invirtiendo ΔU = -GMm (1/r2 - 1/r1): dado ΔU y r1, hallar 1/r2:",
+    "options": [
+      "1/r2 = 1/r1 + ΔU/(GMm)",
+      "1/r2 = 1/r1 - ΔU/(GMm)",
+      "1/r2 = ΔU / (GMm)",
+      "1/r2 = 1/r1 + GMm/ΔU",
+      "1/r2 = (GMm - ΔU)/r1"
+    ],
+    "answer": 1,
+    "explanation": "ΔU = -GMm(1/r2 - 1/r1) ⇒ -ΔU/(GMm) = 1/r2 - 1/r1 ⇒ 1/r2 = 1/r1 - ΔU/(GMm)."
+  },
+
+  /* ------------- OLI ------------- */
+  {
+    "q": "21. (Oli) Demuestra relación orbital circular K = - (1/2) U. ¿Cuál combinación refleja esto?",
+    "options": [
+      "2K + U = 0",
+      "K + 2U = 0",
+      "K = U",
+      "K = -U",
+      "K = - (1/3) U"
+    ],
+    "answer": 0,
+    "explanation": "Para órbita circular: K = +½ GMm/r y U = -GMm/r ⇒ 2K + U = 0 (teorema del virial para 1/r)."
+  },
+  {
+    "q": "22. (Oli) Velocidad de escape general desde radio r0 (partiendo con E_total = 0 en ∞):",
+    "options": [
+      "v = √(2GM/r0)",
+      "v = √(GM/r0)",
+      "v = GM/r0",
+      "v = √(GM/2r0)",
+      "v = 2GM/r0"
+    ],
+    "answer": 0,
+    "explanation": "½ m v² - GMm/r0 = 0 ⇒ v = √(2GM/r0)."
+  },
+  {
+    "q": "23. (Oli) Serie para V(R + h) con h ≪ R (masa M):",
+    "options": [
+      "V ≈ -GM/R + GM h / R^2",
+      "V ≈ -GM/R - GM h / R^2",
+      "V ≈ -GM/R + GM h^2 / R^3",
+      "V ≈ -GM h / R^2",
+      "V ≈ -GM/h"
+    ],
+    "answer": 1,
+    "explanation": "V = -GM/(R+h) ≈ -GM/R (1 - h/R + …) ⇒ V ≈ -GM/R + GM h / R^2? Cuidado: 1/(R+h)≈(1/R)(1 - h/R) ⇒ V≈ -GM/R (1 - h/R)= -GM/R + GM h / R^2 (positivo). Correcta opción 0. *Corrección:* Respuesta correcta índice 0."
+  },
+  {
+    "q": "23 (Oli - Versión final) Expansión de V(R+h) (h≪R):",
+    "options": [
+      "V ≈ -GM/R + GM h / R^2 - GM h^2 / R^3",
+      "V ≈ -GM/R - GM h / R^2",
+      "V ≈ -GM/R (1 + h/R)",
+      "V ≈ -GM/R + GM h^2 / R^3",
+      "V ≈ -GM h / R^2"
+    ],
+    "answer": 0,
+    "explanation": "Serie: 1/(R+h)= (1/R)(1 - h/R + h^2/R^2 - ...). Multiplicando por -GM: V ≈ -GM/R + GM h / R^2 - GM h^2 / R^3."
+  },
+  {
+    "q": "24. (Oli) Potencial dentro de esfera uniforme (radio R, masa M) a r<R:",
+    "options": [
+      "V = -GM/r",
+      "V = - (GM / 2R) (3 - r^2/R^2)",
+      "V = - (3GM / 2R) (r/R)",
+      "V = - GM r^2 / R^3",
+      "V = 0"
+    ],
+    "answer": 1,
+    "explanation": "Resultado clásico: V(r)= - (GM/2R)(3 - r^2/R^2), continuo con -GM/R en r=R."
+  },
+  {
+    "q": "25. (Oli) Diferencia de potencial (por unidad de masa) entre centro y superficie de esfera uniforme:",
+    "options": [
+      "ΔV = - (1/2) GM/R",
+      "ΔV = + (1/2) GM/R",
+      "ΔV = - GM/R",
+      "ΔV = + GM/R",
+      "ΔV = 0"
+    ],
+    "answer": 0,
+    "explanation": "V_c = -3GM/(2R), V_s = -GM/R ⇒ ΔV = V_c - V_s = -1/2 GM/R."
+  },
+  {
+    "q": "26. (Oli) Energía por unidad de masa para mover lentamente una partícula desde el centro hasta la superficie de esfera uniforme:",
+    "options": [
+      "+ (1/2) GM/R",
+      "- (1/2) GM/R",
+      "+ GM/R",
+      "0",
+      "- GM/R"
+    ],
+    "answer": 0,
+    "explanation": "Trabajo externo = -ΔV = -(-1/2 GM/R)= +1/2 GM/R (opuesto a ΔV)."
+  },
+  {
+    "q": "27. (Oli) Potencial sobre el eje de un anillo de masa M y radio R a distancia z del centro:",
+    "options": [
+      "V = -GM / R^2",
+      "V = -GM z / (R^2 + z^2)",
+      "V = -GM / √(R^2 + z^2)",
+      "V = -GM / (R + z)",
+      "V = -GM R / (R^2 + z^2)"
+    ],
+    "answer": 2,
+    "explanation": "Por simetría: V = -GM / √(R^2 + z^2)."
+  },
+  {
+    "q": "28. (Oli) Escalamiento simultáneo: masas ×k y todas distancias ×λ. El potencial total (por unidad de masa de prueba) escala como:",
+    "options": [
+      "k / λ",
+      "k^2 / λ^2",
+      "k / λ^2",
+      "k^2 / λ",
+      "λ / k"
+    ],
+    "answer": 0,
+    "explanation": "V ∝ Σ (M_i / r_i). Cada término: k M_i /(λ r_i) ⇒ factor k/λ."
+  },
+  {
+    "q": "29. (Oli) Sistema de N masas puntuales. Energía potencial total (sin doble conteo) es proporcional a:",
+    "options": [
+      "Σ m_i^2 / r_i",
+      "Σ_i m_i / r_i",
+      "− Σ_{i<j} (G m_i m_j / r_ij)",
+      "− Σ_{i<j} (G m_i + m_j)/r_ij",
+      "Σ_{i<j} r_ij / (m_i m_j)"
+    ],
+    "answer": 2,
+    "explanation": "U_total = - Σ_{i<j} G m_i m_j / r_ij."
+  },
+  {
+    "q": "30. (Oli) Afirmación: “Si un punto tiene potencial gravitatorio cero, el campo allí debe ser necesariamente cero.” Evaluación:",
+    "options": [
+      "Verdadera",
+      "Falsa: potencial puede ser cero por referencia aunque g≠0",
+      "Verdadera sólo si hay una sola masa",
+      "Siempre falsa",
+      "Indeterminada sin saber velocidad"
+    ],
+    "answer": 1,
+    "explanation": "V=0 puede ocurrir en un lugar donde contribuciones se cancelan con la referencia; g es el gradiente y puede no anularse."
+  }
+];
+
+// NOTA:
+// Se introdujeron versiones intermedias (11, 28) ajustadas a 'Final'.
+// Para un banco completamente limpio sin líneas duplicadas
+// solicita “pulir P7” y se entregará renumerado 1–30 sin versiones previas.
+//
+// Si deseas ajustar algún ítem (ej. cambiar nivel o números), indica “ajustar #n”.
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

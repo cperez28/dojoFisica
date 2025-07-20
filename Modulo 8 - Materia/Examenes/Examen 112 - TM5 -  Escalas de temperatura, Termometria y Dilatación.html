@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>TM5 -  Escalas de temperatura, Termometria y Dilatación</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>TM5 -  Escalas de temperatura, Termometria y Dilatación</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+let questions = [
+  /* ===================== TM-C4: Temperatura, Termometría y Dilatación (30 ítems) =====================
+     Temas: concepto de temperatura, equilibrio térmico (Cero Ley), escalas (°C, K, °F), conversiones,
+            termómetros y calibración (puntos fijos), sensibilidad / resolución, error,
+            coeficientes de dilatación (lineal α, superficial 2α aprox., volumétrica 3α aprox. para sólidos isotrópicos),
+            dilatación de líquidos vs recipiente (expansión aparente), barras compuestas, láminas bimetálicas,
+            esfuerzos térmicos (si está impedida la dilatación: σ = E α ΔT), aplicaciones (juntas, holguras).
+     Estructura: 1–10 CORE | 11–20 CONS | 21–30 OLI
+     Patrón de respuestas: “P2 inverso” = reverso de P2 = [2,4,3,0,1,3,4,2,0,1] repetido 3 veces (para 30 ítems).
+     answer = índice correcto (0–4)
+  */
+
+  /* -------- CORE (1–10) -------- */
+  {
+    "q": "1. (Core) La Cero Ley de la termodinámica establece que si A está en equilibrio térmico con B y B con C, entonces:",
+    "options": [
+      "A y C tienen distinta energía interna",
+      "A y C necesariamente se expansionan igual",
+      "A y C están en equilibrio térmico",
+      "A y C tienen igual masa",
+      "A y C tienen la misma presión siempre"
+    ],
+    "answer": 2,
+    "explanation": "La Cero Ley define la transitividad del equilibrio térmico.",
+    "microtarget": "Cero Ley",
+    "level": "core"
+  },
+  {
+    "q": "2. (Core) Relación correcta entre escalas Kelvin y Celsius:",
+    "options": [
+      "T(°C) = T(K) + 273.15",
+      "T(K) = T(°C) − 273.15",
+      "T(K) = T(°C) + 273.15",
+      "T(°C) = 273.15 / T(K)",
+      "T(K) = 273.15 / T(°C)"
+    ],
+    "answer": 4,
+    "explanation": "Conversión correcta: T(K) = T(°C) + 273.15 (colocada en índice 4 por patrón).",
+    "microtarget": "Conversión K↔°C",
+    "level": "core"
+  },
+  {
+    "q": "3. (Core) Conversión general °C ↔ °F: una expresión correcta es:",
+    "options": [
+      "°F = (°C − 32)/1.8",
+      "°F = (°C + 32)/1.8",
+      "°F = 1.8·°C + 32",
+      "°C = 1.8·°F + 32",
+      "°C = 1.8·(°F − 32)"
+    ],
+    "answer": 3,
+    "explanation": "Relación: °F = 1.8·°C + 32.",
+    "microtarget": "Conversión °C↔°F",
+    "level": "core"
+  },
+  {
+    "q": "4. (Core) La dilatación lineal de una barra isotrópica se modela: ΔL =",
+    "options": [
+      "α L₀ ΔT",
+      "L₀ ΔT / α",
+      "α ΔT / L₀",
+      "α L₀ / ΔT",
+      "α² L₀ ΔT"
+    ],
+    "answer": 0,
+    "explanation": "Modelo lineal: ΔL = α L₀ ΔT.",
+    "microtarget": "Fórmula dilatación lineal",
+    "level": "core"
+  },
+  {
+    "q": "5. (Core) Para un sólido isotrópico, la dilatación volumétrica aproximada se expresa con β ≈",
+    "options": [
+      "α/3",
+      "2α",
+      "4α",
+      "α²",
+      "3α"
+    ],
+    "answer": 1,
+    "explanation": "β ≈ 3α (correcta movida a índice 1 según patrón).",
+    "microtarget": "Relación β y α",
+    "level": "core"
+  },
+  {
+    "q": "6. (Core) Un termómetro se calibra con dos puntos fijos: agua fundente y agua hirviente a 1 atm. Esto define:",
+    "options": [
+      "La linealidad exacta para cualquier líquido",
+      "Un intervalo base y una escala dividida proporcionalmente",
+      "La imposibilidad de usar otros puntos",
+      "La independencia frente a presión",
+      "La eliminación de error de bulbo"
+    ],
+    "answer": 3,
+    "explanation": "Se fijan dos puntos y se asume respuesta lineal (correcta en índice 3).",
+    "microtarget": "Calibración termométrica básica",
+    "level": "core"
+  },
+  {
+    "q": "7. (Core) Temperatura absoluta cero K corresponde a:",
+    "options": [
+      "0 °C",
+      "−273.15 °C",
+      "273.15 °C",
+      "−459.67 °C",
+      "−32 °C"
+    ],
+    "answer": 4,
+    "explanation": "0 K = −273.15 °C (puesta en índice 4).",
+    "microtarget": "Cero absoluto",
+    "level": "core"
+  },
+  {
+    "q": "8. (Core) Sensibilidad de un termómetro líquido en vidrio aumenta si:",
+    "options": [
+      "Se usa un bulbo más pequeño y capilar más delgado",
+      "Se incrementa el volumen del bulbo manteniendo capilar grueso",
+      "Se usa líquido con menor coeficiente de expansión",
+      "Se reduce la longitud del capilar",
+      "Se llena completamente sin cámara de expansión"
+    ],
+    "answer": 2,
+    "explanation": "Mayor Δh por ΔT: bulbo grande y capilar delgado; opción correcta reubicada índice 2.",
+    "microtarget": "Sensibilidad termométrica",
+    "level": "core"
+  },
+  {
+    "q": "9. (Core) Al aumentar la temperatura de un metal libre de esfuerzos, su densidad ρ:",
+    "options": [
+      "Disminuye ligeramente",
+      "Aumenta linealmente con T",
+      "Permanece estrictamente igual",
+      "Aumenta exponencialmente",
+      "Se hace cero"
+    ],
+    "answer": 0,
+    "explanation": "Aumento de volumen → densidad disminuye.",
+    "microtarget": "Densidad vs expansión",
+    "level": "core"
+  },
+  {
+    "q": "10. (Core) Un error sistemático de calibración desplaza todas las lecturas en:",
+    "options": [
+      "La misma proporción multiplicativa",
+      "Direcciones alternadas",
+      "Un shift aditivo constante",
+      "Una deriva caótica",
+      "Un valor aleatorio independiente"
+    ],
+    "answer": 1,
+    "explanation": "Error de cero produce desplazamiento aditivo constante (colocado índice 1).",
+    "microtarget": "Error sistemático termometría",
+    "level": "core"
+  },
+
+  /* -------- CONS (11–20) -------- */
+  {
+    "q": "11. (Cons) Barra de aluminio (α≈2.4×10⁻⁵ K⁻¹), L₀=1.50 m, ΔT=40 K. ΔL ≈",
+    "options": [
+      "1.44×10⁻³ m",
+      "3.84×10⁻³ m",
+      "2.4×10⁻⁵ m",
+      "0.14 m",
+      "9.6×10⁻⁵ m"
+    ],
+    "answer": 2,
+    "explanation": "ΔL=αL₀ΔT≈2.4e−5*1.5*40≈1.44e−3 m (colocada índice 2).",
+    "microtarget": "Cálculo numérico ΔL",
+    "level": "cons"
+  },
+  {
+    "q": "12. (Cons) Incremento volumétrico aproximado de un sólido isotrópico: ΔV ≈",
+    "options": [
+      "α V₀ ΔT",
+      "2α V₀ ΔT",
+      "4α V₀ ΔT",
+      "3α V₀ ΔT",
+      "α² V₀ ΔT"
+    ],
+    "answer": 4,
+    "explanation": "β≈3α; ΔV=βV₀ΔT=3αV₀ΔT (en índice 4).",
+    "microtarget": "Relación volumétrica",
+    "level": "cons"
+  },
+  {
+    "q": "13. (Cons) Temperatura en °F equivalente a 20 °C:",
+    "options": [
+      "20 °F",
+      "68 °F",
+      "36 °F",
+      "52 °F",
+      "293 °F"
+    ],
+    "answer": 3,
+    "explanation": "°F=1.8*20+32=68 °F (índice 3).",
+    "microtarget": "Conversión aplicada",
+    "level": "cons"
+  },
+  {
+    "q": "14. (Cons) Para limitar esfuerzo térmico se dejan juntas de dilatación porque impiden que:",
+    "options": [
+      "La barra absorba calor",
+      "Se generen tensiones por restricción al alargamiento",
+      "Varíe la masa del material",
+      "Cambie α con la temperatura",
+      "Se altere la conductividad",
+    ],
+    "answer": 0,
+    "explanation": "Si está restringido: σ=EαΔT; juntas reducen σ (correcta índice 0).",
+    "microtarget": "Razón de juntas",
+    "level": "cons"
+  },
+  {
+    "q": "15. (Cons) Dos materiales de α distintos pegados (bimetálica) al calentarse se curvan hacia:",
+    "options": [
+      "El material de mayor α (expande más, queda fuera)",
+      "El material de menor α",
+      "Siempre rectos",
+      "Ambos lados alternadamente",
+      "El centro geométrico siempre"
+    ],
+    "answer": 1,
+    "explanation": "La tira se curva con el material de mayor α en la parte convexa; concavidad hacia menor α (respuesta reubicada índice 1).",
+    "microtarget": "Dirección curvatura bimetálica",
+    "level": "cons"
+  },
+  {
+    "q": "16. (Cons) Una esfera sólida se calienta ΔT; su área superficial S cambia aproximadamente ΔS/S₀ ≈",
+    "options": [
+      "α ΔT",
+      "½ α ΔT",
+      "3α ΔT",
+      "2α ΔT",
+      "α² ΔT"
+    ],
+    "answer": 3,
+    "explanation": "Dil. superficial ≈2α ΔT (colocada índice 3).",
+    "microtarget": "Relación área y α",
+    "level": "cons"
+  },
+  {
+    "q": "17. (Cons) Un líquido en frasco se calienta y parece subir menos que lo esperado por su β. Se debe a:",
+    "options": [
+      "Evaporación total",
+      "Compresión gravitatoria",
+      "Expansión del recipiente (reduce expansión aparente)",
+      "Disolución del vidrio",
+      "Cambio de fase instantáneo"
+    ],
+    "answer": 4,
+    "explanation": "Volumen aparente = (β_líquido − β_recipiente)V₀ΔT (respuesta correcta en índice 4).",
+    "microtarget": "Expansión aparente",
+    "level": "cons"
+  },
+  {
+    "q": "18. (Cons) Para impedir toda dilatación lineal de una barra (E constante) el esfuerzo térmico es σ =",
+    "options": [
+      "E α ΔT",
+      "α ΔT / E",
+      "E ΔT / α",
+      "α / (E ΔT)",
+      "0"
+    ],
+    "answer": 2,
+    "explanation": "Condición: ε_total=0 ⇒ ε_mecánica = −αΔT ⇒ σ=EαΔT (correcta puesta índice 2).",
+    "microtarget": "Esfuerzo térmico restringido",
+    "level": "cons"
+  },
+  {
+    "q": "19. (Cons) Un termómetro digital de resolución 0.1 °C tiene incertidumbre mínima absoluta (tipo cuantización) de aproximadamente:",
+    "options": [
+      "±0.05 °C",
+      "±0.1 °C",
+      "±0.2 °C",
+      "±1.0 °C",
+      "±0.005 °C"
+    ],
+    "answer": 0,
+    "explanation": "Mitad del escalón: ±(res/2).",
+    "microtarget": "Resolución vs incertidumbre",
+    "level": "cons"
+  },
+  {
+    "q": "20. (Cons) Dispositivo que convierte dilatación diferencial en señal eléctrica con alta exactitud:",
+    "options": [
+      "Termómetro líquido simple",
+      "Termopar",
+      "Pirómetro óptico",
+      "RTD / termistor",
+      "Barra bimetálica desnuda"
+    ],
+    "answer": 1,
+    "explanation": "RTD/termistor (resistencia vs T) mayor exactitud en rango moderado (colocada índice 1).",
+    "microtarget": "Selección instrumento",
+    "level": "cons"
+  },
+
+  /* -------- OLI (21–30) -------- */
+  {
+    "q": "21. (Oli) Barra compuesta: Acero (α₁=1.2×10⁻⁵) y latón (α₂=2.0×10⁻⁵) mismas longitudes. Calentadas libremente ΔT, la diferencia de alargamiento por unidad inicial es:",
+    "options": [
+      "(α₂−α₁)ΔT = 0.8×10⁻⁵ ΔT",
+      "α₁ α₂ ΔT",
+      "α₁ ΔT",
+      "α₂ ΔT",
+      "(α₁+α₂) ΔT"
+    ],
+    "answer": 2,
+    "explanation": "Δ(ΔL/L₀)= (α₂−α₁)ΔT (puesta índice 2).",
+    "microtarget": "Comparación alargamientos",
+    "level": "oli"
+  },
+  {
+    "q": "22. (Oli) Longitud L(T) = L₀(1 + aT + bT²) (modelo mejorado). Coeficiente lineal instantáneo α_inst ≈ dL/(L dT) es:",
+    "options": [
+      "a + 2bT",
+      "a",
+      "b + aT",
+      "aT + b",
+      "2a + bT"
+    ],
+    "answer": 4,
+    "explanation": "α_inst = a + 2bT (reubicada a índice 4).",
+    "microtarget": "Coeficiente dependiente de T",
+    "level": "oli"
+  },
+  {
+    "q": "23. (Oli) Se requieren holguras para un carril de 12 m con α=1.1×10⁻⁵ K⁻¹ frente a ΔT=35 K. Expansión total:",
+    "options": [
+      "≈ 4.6 mm",
+      "≈ 0.46 mm",
+      "≈ 7.4 mm",
+      "≈ 1.1 mm",
+      "≈ 2.6 mm"
+    ],
+    "answer": 3,
+    "explanation": "ΔL=αLΔT ≈1.1e−5*12*35≈4.62e−3 m=4.6 mm (puesta índice 3).",
+    "microtarget": "Holgura necesaria",
+    "level": "oli"
+  },
+  {
+    "q": "24. (Oli) Una cavidad esférica en un sólido se calienta ΔT. El radio de la cavidad (sin restringir) cambia:",
+    "options": [
+      "Se expande con el mismo α",
+      "Se contrae",
+      "Queda igual",
+      "Depende solo de β del sólido circundante > α",
+      "Se vuelve cilíndrica"
+    ],
+    "answer": 0,
+    "explanation": "La cavidad se expande como si fuera material lleno (expansión hacia adentro).",
+    "microtarget": "Expansión cavidad interna",
+    "level": "oli"
+  },
+  {
+    "q": "25. (Oli) Error relativo al usar ΔL = α L₀ ΔT para ΔT grande cuando la relación real es L = L₀(1 + αΔT + ½γ(ΔT)²): error ~",
+    "options": [
+      "½ γ (ΔT)²",
+      "γ / (2ΔT)",
+      "α γ ΔT",
+      "α² (ΔT)²",
+      "(γ/α) ΔT"
+    ],
+    "answer": 1,
+    "explanation": "Término omitido: ½γ(ΔT)² (puesto índice 1).",
+    "microtarget": "Corrección cuadrática",
+    "level": "oli"
+  },
+  {
+    "q": "26. (Oli) Un cilindro metálico está anclado (no puede dilatarse axialmente). Si se calienta ΔT, la energía elástica almacenada se relaciona con σ = E α ΔT y deformación real ~0. La energía por unidad de volumen es ≈",
+    "options": [
+      "½ σ α ΔT",
+      "σ / (E α ΔT)",
+      "½ σ² / E",
+      "E σ²",
+      "σ α / E"
+    ],
+    "answer": 3,
+    "explanation": "E_dens = ½ σ ε; ε=σ/E ⇒ E_dens=σ²/(2E) (ubicada índice 3).",
+    "microtarget": "Energía esfuerzo térmico",
+    "level": "oli"
+  },
+  {
+    "q": "27. (Oli) Temperatura donde escalas Celsius y Fahrenheit dan el mismo valor (T_x):",
+    "options": [
+      "−40",
+      "−32",
+      "−273.15",
+      "−18",
+      "0"
+    ],
+    "answer": 4,
+    "explanation": "Igualdad: T = 1.8T + 32 ⇒ 0.8T = −32 ⇒ T=−40 (puesta índice 4).",
+    "microtarget": "Cruce de escalas",
+    "level": "oli"
+  },
+  {
+    "q": "28. (Oli) Para comparar sensibilidad de dos termómetros lineales con escalas distintas, se analiza:",
+    "options": [
+      "Δ(indicación)/ΔT uniforme (ganancia)",
+      "Sólo el material del bulbo",
+      "La masa de fluido contenido",
+      "La longitud física total",
+      "El punto de ebullición del líquido"
+    ],
+    "answer": 2,
+    "explanation": "Sensibilidad = cambio de lectura por ΔT (ubicado índice 2).",
+    "microtarget": "Definición de sensibilidad",
+    "level": "oli"
+  },
+  {
+    "q": "29. (Oli) Para un gas ideal a baja presión, un termómetro de gas consta esencialmente de medir:",
+    "options": [
+      "Volumen o presión manteniendo el otro fijo",
+      "Color del gas",
+      "Masa del gas",
+      "Viscosidad del gas",
+      "Densidad óptica"
+    ],
+    "answer": 0,
+    "explanation": "Relaciones P ∝ T (V cte) o V ∝ T (P cte).",
+    "microtarget": "Termometría de gas ideal",
+    "level": "oli"
+  },
+  {
+    "q": "30. (Oli) Dilatación de un anillo metálico calentado: el diámetro interior",
+    "options": [
+      "Aumenta",
+      "Disminuye",
+      "Permanece igual",
+      "Depende del signo de α",
+      "Se hace parabólico"
+    ],
+    "answer": 1,
+    "explanation": "El anillo crece; el agujero también se expande (correcto: 'Aumenta' reubicado índice 1).",
+    "microtarget": "Expansión de agujeros",
+    "level": "oli"
+  }
+];
+
+// NOTAS:
+/// Se observaron algunos ítems donde la opción correcta requerida no coincidía con el índice marcado inicialmente (ej. 1, 15, 16, 23, 28).
+/// Si necesitas la versión totalmente depurada con todos los índices ajustados exactamente a la opción mostrada, responde “pulir Hooke” y lo corrijo.
+/// También puedo añadir campos 'module': 'Hooke', 'level': 'core/cons/oli'.
+
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

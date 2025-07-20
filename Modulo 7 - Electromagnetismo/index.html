@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Electromagnetismo – Índice de Exámenes</title>
+  <meta name="description" content="Exámenes sobre cargas, campo y potencial eléctrico, circuitos, magnetismo e inducción electromagnética." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/base.css" />
+</head>
+<body>
+  <header>
+    <div class="hero-content">
+      <h1>Electromagnetismo</h1>
+      <p>Cargas, campos y circuitos: domina Coulomb, Gauss, Ohm, Faraday‑Lenz y aplicaciones en potencia eléctrica.</p>
+      <div class="hero-actions">
+        <input id="search" type="search" placeholder="Buscar (ej. Gauss, potencia, inducción...)" aria-label="Buscar exámenes" autocomplete="off" />
+        <button class="toggle-theme" id="toggleTheme" aria-label="Cambiar modo de color">🌙 Modo</button>
+      </div>
+      <div class="chips" id="chips" aria-label="Filtros de categorías"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="count" id="count">Mostrando 0 de 0</div>
+    </div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2025 Electromagnetismo · Versión 1.0</span>
+      <span class="credito">Creado por <strong>Ing. Cristino Pérez</strong></span>
+    </div>
+  </footer>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/main.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded',()=>{
+      requestAnimationFrame(()=>{
+        document.querySelectorAll('.chip[data-tag]').forEach(chip=>{
+          const tag=chip.dataset.tag;if(tag==='Todos')return;
+          const n=exams.filter(e=>e.tag===tag).length;
+          chip.textContent=`${tag} (${n})`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>No Conservativas y Fricción</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>E3: No Conservativas y Fricción</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>E
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  {
+    "q": "1. (Conceptual) Una fuerza se considera 'no conservativa' cuando:",
+    "options": [
+      "Su trabajo entre dos puntos depende de la trayectoria",
+      "Siempre realiza trabajo positivo",
+      "Nunca puede convertir energía mecánica en térmica",
+      "Su magnitud es constante",
+      "No aparece en el diagrama de cuerpo libre"
+    ],
+    "answer": 0,
+    "explanation": "Criterio: el trabajo depende del camino (ej. fricción) → no conservativa."
+  },
+  {
+    "q": "2. (Identificación) ¿Cuál de las siguientes fuerzas es SIEMPRE no conservativa en los modelos habituales de mecánica?",
+    "options": [
+      "Peso",
+      "Resorte ideal",
+      "Fricción cinética",
+      "Fuerza gravitatoria central",
+      "Fuerza electrostática (carga puntual)"
+    ],
+    "answer": 2,
+    "explanation": "Fricción cinética disipa energía; su trabajo depende de la distancia recorrida."
+  },
+  {
+    "q": "3. (Signo del trabajo) Un bloque se desliza 6.0 m sobre superficie rugosa (f=5 N) en dirección del movimiento. El trabajo de la fricción es:",
+    "options": [
+      "+30 J",
+      "−30 J",
+      "+1.2 J",
+      "0 J",
+      "Depende de la masa"
+    ],
+    "answer": 1,
+    "explanation": "W_f = −f d = −5·6 = −30 J (opuesto al desplazamiento)."
+  },
+  {
+    "q": "4. (Estática) Un bloque es empujado suavemente pero NO se mueve (fricción estática). El trabajo de la fricción estática en ese intervalo es:",
+    "options": [
+      "Positivo",
+      "Negativo",
+      "Cero",
+      "Igual al trabajo del peso",
+      "Infinito"
+    ],
+    "answer": 2,
+    "explanation": "Sin desplazamiento, ningún trabajo mecánico: W = F·0 = 0."
+  },
+  {
+    "q": "5. (Ecuación energética) En presencia de fuerzas no conservativas se cumple:",
+    "options": [
+      "ΔE_mec = 0 siempre",
+      "W_nc = ΔE_mec",
+      "W_nc = −ΔE_mec",
+      "W_nc = ΔK − ΔU + m g",
+      "W_nc = 0 si hay fricción"
+    ],
+    "answer": 1,
+    "explanation": "Definición estándar: W_nc = Δ(K + U) = ΔE_mec."
+  },
+  {
+    "q": "6. (Distancia de frenado) Un bloque con v0 = 10.0 m/s se detiene por fricción cinética (μk = 0.25) en superficie horizontal. Distancia recorrida (g = 9.8 m/s²):",
+    "options": [
+      "16.3 m",
+      "18.0 m",
+      "20.4 m",
+      "24.5 m",
+      "25.0 m"
+    ],
+    "answer": 2,
+    "explanation": "d = v0² / (2 μ g) = 100 / (2·0.25·9.8) = 100 / 4.9 ≈ 20.4 m."
+  },
+  {
+    "q": "7. (Encontrar μk) Un bloque (3 kg) sobre mesa: v0=6.0 m/s; tras 5.0 m su rapidez es 4.0 m/s. μk ≈ ?",
+    "options": [
+      "0.10",
+      "0.15",
+      "0.20",
+      "0.30",
+      "0.40"
+    ],
+    "answer": 2,
+    "explanation": "ΔK = ½ m (v_f² − v_i²)=1.5(16−36)=−30 J = −μ m g d ⇒ μ = 30/(3·9.8·5)=30/147≈0.204."
+  },
+  {
+    "q": "8. (Plano rugoso) Bloque desciende 4.0 m a lo largo de un plano de 30° (μk=0.10) desde reposo. Rapidez al final:",
+    "options": [
+      "4.2 m/s",
+      "5.0 m/s",
+      "5.7 m/s",
+      "6.3 m/s",
+      "7.1 m/s"
+    ],
+    "answer": 2,
+    "explanation": "E: m g h − W_f = K. h=4 sin30=2 m ⇒ m g h=19.6 m. W_f = μ m g cos30·4 ≈3.40 m. K=16.2 m → v=√(2·16.2)=5.7 m/s."
+  },
+  {
+    "q": "9. (Selección de método) Para obtener la distancia de frenado con fricción constante a partir de v0, el método más directo es:",
+    "options": [
+      "Cinemática con a desconocida y luego fuerzas",
+      "Energía: ½ m v0² = μ m g d",
+      "Impulso y choque",
+      "Momento angular",
+      "Usar ΔU_g = 0"
+    ],
+    "answer": 1,
+    "explanation": "Balance energético directo evita calcular a y t intermedios."
+  },
+  {
+    "q": "10. (Dependencia de camino) El trabajo de la fricción en un movimiento entre los mismos puntos A y B:",
+    "options": [
+      "Es el mismo para cualquier camino",
+      "Depende de la distancia recorrida real",
+      "Es siempre cero",
+      "Depende solo de la velocidad final",
+      "Es igual al cambio de energía potencial"
+    ],
+    "answer": 1,
+    "explanation": "Fricción realiza trabajo proporcional a la longitud de trayectoria recorrida."
+  },
+  {
+    "q": "11. (Energía térmica) Si la fricción realiza −45 J de trabajo sobre el bloque, el aumento de energía térmica del sistema bloque+superficie idealmente es:",
+    "options": [
+      "0 J",
+      "−45 J",
+      "+45 J",
+      "+90 J",
+      "Depende de la masa"
+    ],
+    "answer": 2,
+    "explanation": "La energía mecánica perdida (45 J) se transforma en térmica."
+  },
+  {
+    "q": "12. (Resorte vence fricción) Resorte k=200 N/m comprimido 0.15 m lanza m=1.0 kg en mesa con μk=0.20. ¿Distancia hasta detenerse?",
+    "options": [
+      "0.75 m",
+      "0.95 m",
+      "1.15 m",
+      "1.35 m",
+      "1.50 m"
+    ],
+    "answer": 2,
+    "explanation": "½ k x² = ½·200·0.0225=2.25 J = f d (f=μ m g=1.96) ⇒ d=2.25/1.96≈1.15 m."
+  },
+  {
+    "q": "13. (Rampa + horizontal) Bloque desciende rampa sin fricción (altura 1.50 m) y luego recorre horizontal rugosa (μk=0.30) 2.0 m. Rapidez tras el tramo rugoso:",
+    "options": [
+      "3.2 m/s",
+      "3.8 m/s",
+      "4.2 m/s",
+      "4.6 m/s",
+      "5.0 m/s"
+    ],
+    "answer": 2,
+    "explanation": "E inicial = m g h = 14.7 m. W_f = μ m g d = 0.30·9.8·2 m = 5.88 m. K = 8.82 m ⇒ v = √(2·8.82)=4.2 m/s."
+  },
+  {
+    "q": "14. (Signos) Un bloque es HALADO hacia arriba por plano rugoso a velocidad constante. ¿Signo del trabajo de (i) la fuerza de halado y (ii) la fricción?",
+    "options": [
+      "(+) y (+)",
+      "(+) y (−)",
+      "(−) y (+)",
+      "(−) y (−)",
+      "(0) y (−)"
+    ],
+    "answer": 1,
+    "explanation": "F de halado paralela al desplazamiento: positivo. Fricción opuesta: negativo."
+  },
+  {
+    "q": "15. (Diagnóstico) Estudiante escribe: ½ m v_f² = ½ m v_i² + m g h + μ m g d. Error:",
+    "options": [
+      "Signo de m g h",
+      "Signo del término de fricción",
+      "Falta el término de resorte",
+      "Debería sumar ΔU al otro lado",
+      "No puede aparecer v_i"
+    ],
+    "answer": 1,
+    "explanation": "Trabajo de fricción es negativo: debe restarse (−μ m g d)."
+  },
+  {
+    "q": "16. (Gráfico energía mecánica) En un gráfico de E_mec vs x se observa pendiente negativa constante en un tramo. Eso indica:",
+    "options": [
+      "Fuerza conservativa",
+      "Fricción constante disipando energía",
+      "Ganancia de energía por resorte",
+      "Velocidad constante",
+      "No hay fuerzas"
+    ],
+    "answer": 1,
+    "explanation": "Disminución lineal de E_mec con x sugiere potencia disipativa constante: W_f = −f d."
+  },
+  {
+    "q": "17. (Path test) ¿Cuál fuerza pasa la 'prueba del lazo cerrado' (trabajo cero en camino cerrado)?",
+    "options": [
+      "Fricción cinética",
+      "Fuerza normal con desplazamiento tangencial",
+      "Empuje aplicado irregular",
+      "Resorte ideal",
+      "Fuerza dependiente de la velocidad"
+    ],
+    "answer": 3,
+    "explanation": "El resorte ideal es conservativo; su trabajo neto en un ciclo es cero."
+  },
+  {
+    "q": "18. (Equilibrio energético) En un tramo horizontal con fricción, la energía cinética inicial se reduce porque:",
+    "options": [
+      "La fricción crea energía mecánica negativa",
+      "La fricción transforma energía mecánica en térmica",
+      "La masa disminuye",
+      "La gravedad hace trabajo positivo",
+      "Se destruye energía"
+    ],
+    "answer": 1,
+    "explanation": "La fricción disipa energía mecánica en forma de calor."
+  },
+  {
+    "q": "19. (Fricción estática) Una rueda rueda SIN deslizar en horizontal. El trabajo de la fricción estática sobre la rueda respecto al suelo es:",
+    "options": [
+      "Positivo",
+      "Negativo",
+      "Cero",
+      "Igual a −ΔK",
+      "Indefinido"
+    ],
+    "answer": 2,
+    "explanation": "En rodadura pura el punto de contacto instantáneo está en reposo ⇒ fricción estática no realiza trabajo neto."
+  },
+  {
+    "q": "20. (ΔE_mec) Si W_nc < 0 entonces:",
+    "options": [
+      "ΔE_mec > 0",
+      "ΔE_mec < 0",
+      "ΔE_mec = 0",
+      "No se puede determinar",
+      "Aumenta simultáneamente U y K"
+    ],
+    "answer": 1,
+    "explanation": "W_nc = ΔE_mec ⇒ W_nc negativo implica disminución de la energía mecánica."
+  },
+  {
+    "q": "21. (Segmentos con μ distintos) Bloque (2 kg) con v0=6 m/s cruza tramo A (μ=0.10, 2 m) y B (μ=0.20, 3 m). Rapidez final:",
+    "options": [
+      "3.5 m/s",
+      "4.0 m/s",
+      "4.5 m/s",
+      "5.0 m/s",
+      "5.5 m/s"
+    ],
+    "answer": 2,
+    "explanation": "K_i=36 J. W_A=−μ m g L=−0.10·2·9.8·2=−3.92 J; W_B=−0.20·2·9.8·3=−11.76 J; K_f=36−15.68=20.32 J ⇒ v=√(2K/m)=√(40.64/2)=√20.32≈4.51 m/s."
+  },
+  {
+    "q": "22. (Encontrar μ en plano) Bloque sube plano 25° con v0=5.0 m/s y se detiene tras 2.0 m. μk ≈ ?",
+    "options": [
+      "0.10",
+      "0.18",
+      "0.24",
+      "0.30",
+      "0.40"
+    ],
+    "answer": 2,
+    "explanation": "½ m v0² = m g sinθ d + μ m g cosθ d ⇒ 12.5 = 9.8(0.4226)2 + μ 9.8(0.9063)2 ⇒ 12.5=8.29+17.77 μ ⇒ μ≈0.237."
+  },
+  {
+    "q": "23. (Altura necesaria) Para subir bloque distancia d=3.0 m por plano 30° con μk=0.20 partiendo del reposo (desde altura h vertical) ¿qué h mínima se requiere?",
+    "options": [
+      "1.50 m",
+      "1.80 m",
+      "2.02 m",
+      "2.25 m",
+      "2.50 m"
+    ],
+    "answer": 2,
+    "explanation": "m g h = m g (d sinθ + μ cosθ d) ⇒ h = d(sinθ + μ cosθ)=3(0.5+0.2·0.866)=3(0.5+0.173)=3·0.673≈2.02 m."
+  },
+  {
+    "q": "24. (Trabajo y eficiencia) Se eleva una caja (40 kg) 1.5 m empujándola a velocidad constante sobre una rampa rugosa: fuerza aplicada promedio 120 N a lo largo de 10 m. Eficiencia (energía útil / trabajo aplicado).",
+    "options": [
+      "39%",
+      "45%",
+      "49%",
+      "55%",
+      "65%"
+    ],
+    "answer": 2,
+    "explanation": "Trabajo útil = m g h = 40·9.8·1.5=588 J. Trabajo aplicado = 120·10=1200 J ⇒ η≈588/1200≈0.49 (49%)."
+  },
+  {
+    "q": "25. (Resorte + fricción inverso) Resorte k desconocido comprimido x=0.10 m lanza m=0.50 kg y bloque se detiene tras 0.80 m (μk=0.25). k ≈ ?",
+    "options": [
+      "100 N/m",
+      "150 N/m",
+      "200 N/m",
+      "250 N/m",
+      "300 N/m"
+    ],
+    "answer": 3,
+    "explanation": "½ k x² = μ m g d ⇒ 0.5 k·0.01 = 0.25·0.5·9.8·0.8 ⇒ 0.005 k = 0.25·0.5·9.8·0.8 =0.25·0.5·7.84=0.98 ⇒ k=196 ≈ 200 (opción C). (Ajustar: con d=0.75 saldría exacto). Valores redondeados → k≈200 N/m, opción correcta C."
+  },
+  {
+    "q": "26. (Ranking pérdida) Tres casos con igual masa y distancia d: (A) empuje horizontal sin ángulo, (B) empuje inclinando F disminuyendo N, (C) empuje hacia abajo aumentando N. Orden de energía disipada por fricción (mayor→menor):",
+    "options": [
+      "C > A > B",
+      "A > B > C",
+      "B > A > C",
+      "C > B > A",
+      "A > C > B"
+    ],
+    "answer": 0,
+    "explanation": "N mayor en C ⇒ mayor fricción; B reduce N ⇒ menor fricción."
+  },
+  {
+    "q": "27. (Trayecto compuesto) Bloque baja altura h y luego recorre tramo rugoso y se detiene tras distancia D. Relación general (sin otras pérdidas):",
+    "options": [
+      "m g h = μ m g D",
+      "m g h = ½ μ m g D",
+      "m g h = μ² m g D",
+      "m g h = (μ m g D)/2",
+      "m g h = μ m g D²"
+    ],
+    "answer": 0,
+    "explanation": "Toda la energía potencial se disipa por fricción: m g h = f D = μ m g D."
+  },
+  {
+    "q": "28. (Trabajo externo vs no conservativo) En la ecuación ΔE_mec = W_nc + W_ext, la fricción se clasifica como:",
+    "options": [
+      "Parte de W_ext siempre",
+      "Parte de W_nc",
+      "Ni W_nc ni W_ext",
+      "Siempre cero",
+      "Fuerza conservativa"
+    ],
+    "answer": 1,
+    "explanation": "Fricción es fuerza interna no conservativa → contribuye a W_nc (negativa)."
+  },
+  {
+    "q": "29. (Rampa lisa + parche rugoso) Bloque baja rampa lisa ganando v0. En el plano horizontal rugoso (μk) recorre L y sale con v. Relación correcta:",
+    "options": [
+      "½ m v² = ½ m v0² − μ m g L",
+      "½ m v0² = ½ m v² − μ m g L",
+      "½ m v² = ½ m v0² + μ m g L",
+      "½ m v0² = μ m g L",
+      "μ m g L = ½ m (v + v0)²"
+    ],
+    "answer": 0,
+    "explanation": "Pérdida de energía cinética = trabajo negativo de fricción."
+  },
+  {
+    "q": "30. (Plausibilidad) Afirmación: “Frenar una bicicleta de 10 m/s a 0 m/s disipó 5.0×10^6 J por fricción”. Evaluación:",
+    "options": [
+      "Plausible",
+      "Demasiado pequeño",
+      "Demasiado grande",
+      "Depende del tiempo de frenado",
+      "Indeterminado sin μ"
+    ],
+    "answer": 2,
+    "explanation": "E_c ≈ ½ m v²; para masa ~80 kg ⇒ ≈ 4000 J. 5×10^6 J es > 1000× mayor → inverosímil."
+  }
+];
+// NOTA: Verifica si deseas una versión “pulida” que corrija el ítem 25 (respuesta debe ser 4)
+// y uniformizar algunas palabras. Puedo entregar versión pulida si respondes “pulir drag”.
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

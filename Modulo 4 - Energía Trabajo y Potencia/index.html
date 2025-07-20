@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Energía, Trabajo y Potencia – Índice de Exámenes</title>
+  <meta name="description" content="Exámenes sobre trabajo, energía cinética y potencial, fuerzas no conservativas, potencia y métodos energéticos avanzados." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/base.css" />
+</head>
+<body>
+  <header>
+    <div class="hero-content">
+      <h1>Energía · Trabajo · Potencia</h1>
+      <p>Domina los principios energéticos: teorema trabajo‑energía, fuerzas conservativas y no conservativas, potencia mecánica y optimización.</p>
+      <div class="hero-actions">
+        <input id="search" type="search" placeholder="Buscar (ej. potencial, fricción, potencia...)" aria-label="Buscar exámenes" autocomplete="off" />
+        <button class="toggle-theme" id="toggleTheme" aria-label="Cambiar modo de color">🌙 Modo</button>
+      </div>
+      <div class="chips" id="chips" aria-label="Filtros de categorías"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="count" id="count">Mostrando 0 de 0</div>
+    </div>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2025 Energía · Trabajo · Potencia · Versión 1.0</span>
+      <span class="credito">Creado por <strong>Ing. Cristino Pérez</strong></span>
+    </div>
+  </footer>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/main.js"></script>
+  <!-- Mejora rápida: añadir conteo en chips sin tocar main.js original -->
+  <script>
+    // Espera a que main.js construya chips y luego añade conteo
+    window.addEventListener('DOMContentLoaded',()=>{
+      // retraso mínimo para asegurar buildChips terminó
+      requestAnimationFrame(()=>{
+        const chips = document.querySelectorAll('.chip[data-tag]');
+        chips.forEach(chip=>{
+          const tag = chip.dataset.tag;
+          if(tag === 'Todos') return;
+          const n = exams.filter(e=>e.tag===tag).length;
+          chip.textContent = `${tag} (${n})`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

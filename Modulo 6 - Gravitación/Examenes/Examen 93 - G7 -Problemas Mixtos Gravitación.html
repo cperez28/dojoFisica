@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>G6-Problemas Mixtos Gravitación</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>G7 - Problemas Mixtos Gravitación</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>E
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+/* ============== PREGUNTAS ============== */
+let questions = [
+  /* ===================== G7+G8+G9 COMBINADOS (30 Ítems) =====================
+     Limpiado (se eliminaron versiones preliminares de 12 y 15).
+     Respuestas re‑ordenadas aleatoriamente.
+     REGLA PEDIDA: ningún índice de respuesta correcto es 1.
+     Distribución de índices correctos: 0→8 veces, 2→8, 3→7, 4→7 (balanceado sin usar 1).
+     Notación: μ = G M; vis-viva: v² = μ(2/r − 1/a); r_p=a(1−e); r_a=a(1+e).
+  */
+
+  /* -------- CORE (1–10) -------- */
+  {
+    "q": "1. (Core) Para una órbita elíptica, el semieje mayor a se relaciona con periapsis y apoapsis por:",
+    "options": [
+      "a = (r_p r_a)/(r_p + r_a)",
+      "a = (r_a - r_p)/2",
+      "a = √(r_p r_a)",
+      "a = (r_p + r_a)/2",
+      "a = r_p r_a"
+    ],
+    "answer": 3,
+    "explanation": "Geometría: r_p + r_a = 2a."
+  },
+  {
+    "q": "2. (Core) Excentricidad en términos de r_p y r_a:",
+    "options": [
+      "e = (r_a - r_p)/(r_a + r_p)",
+      "e = r_p / r_a",
+      "e = (r_a + r_p)/(r_a - r_p)",
+      "e = √(r_p r_a)/(r_a + r_p)",
+      "e = r_a / r_p"
+    ],
+    "answer": 0,
+    "explanation": "e = (r_a - r_p)/(r_a + r_p)."
+  },
+  {
+    "q": "3. (Core) Energía específica (por unidad de masa) de una órbita elíptica:",
+    "options": [
+      "ε = - μ /(r_p + r_a)",
+      "ε = - μ /(a^2)",
+      "ε = - μ /(r_p - r_a)",
+      "ε = - μ /(r_p r_a)",
+      "ε = - μ /(2a)"
+    ],
+    "answer": 4,
+    "explanation": "Sólo depende de a: ε = -μ/(2a)."
+  },
+  {
+    "q": "4. (Core) Fórmula de vis‑viva:",
+    "options": [
+      "v² = μ(1/a - 2/r)",
+      "v² = μ(2/a - 1/r)",
+      "v² = μ(2/r - 1/a)",
+      "v² = μ(2/r + 1/a)",
+      "v² = μ(1/r - 2/a)"
+    ],
+    "answer": 2,
+    "explanation": "v² = μ(2/r - 1/a)."
+  },
+  {
+    "q": "5. (Core) Para órbita circular (e=0) la vis‑viva reduce a:",
+    "options": [
+      "v = √(μ / r)",
+      "v = μ r",
+      "v = √(2 μ / r)",
+      "v = μ / r",
+      "v = √(μ r)"
+    ],
+    "answer": 0,
+    "explanation": "Con a = r ⇒ v=√(μ/r)."
+  },
+  {
+    "q": "6. (Core) Un satélite cae radialmente desde reposo en r0. Velocidad al llegar a r (r<r0):",
+    "options": [
+      "v = μ(1/r - 1/r0)",
+      "v = √[μ(1/r0 - 1/r)]",
+      "v = √[μ(2/r0 - 1/r)]",
+      "v = √[2μ(1/r - 1/r0)]",
+      "v = √[2μ(1/r0 - 1/r)]"
+    ],
+    "answer": 3,
+    "explanation": "½v² = μ(1/r - 1/r0) ⇒ v = √[2μ(1/r - 1/r0)]."
+  },
+  {
+    "q": "7. (Core) Velocidad de escape desde radio r:",
+    "options": [
+      "v_esc = μ / r",
+      "v_esc = 2 √(μ / r)",
+      "v_esc = √(2μ / r)",
+      "v_esc = √(μ r)",
+      "v_esc = √(μ / 2r)"
+    ],
+    "answer": 2,
+    "explanation": "Condición E=0 ⇒ v_esc=√(2μ/r)."
+  },
+  {
+    "q": "8. (Core) Órbita geoestacionaria exige que el período T sea igual a:",
+    "options": [
+      "Un múltiplo arbitrario de 2π",
+      "El período lunar",
+      "La velocidad angular del Sol",
+      "La mitad del día",
+      "El período de rotación del planeta"
+    ],
+    "answer": 4,
+    "explanation": "Debe igualar la rotación planetaria."
+  },
+  {
+    "q": "9. (Core) Condición de geostacionaria para r_geo usando ω:",
+    "options": [
+      "μ / r_geo^3 = ω^2",
+      "μ r_geo^2 = ω^2",
+      "μ / r_geo^2 = ω^2",
+      "μ r_geo = ω^2",
+      "μ / r_geo = ω^2"
+    ],
+    "answer": 0,
+    "explanation": "De T=2π/ω y T²=4π² r³/μ."
+  },
+  {
+    "q": "10. (Core) Si el radio de una órbita circular se duplica, el período se multiplica por:",
+    "options": [
+      "√2",
+      "4",
+      "2√2",
+      "2",
+      "1/2"
+    ],
+    "answer": 2,
+    "explanation": "T ∝ r^(3/2) ⇒ (2)^(3/2)=2√2."
+  },
+
+  /* -------- CONS (11–20) -------- */
+  {
+    "q": "11. (Cons) En una elipse con r_p=8000 km y r_a=12000 km, el semieje mayor a es:",
+    "options": [
+      "9333 km",
+      "9600 km",
+      "8800 km",
+      "10000 km",
+      "20000 km"
+    ],
+    "answer": 3,
+    "explanation": "a = (8000+12000)/2 = 10000 km."
+  },
+  {
+    "q": "12. (Cons) Excentricidad con r_p=8000 km, r_a=12000 km:",
+    "options": [
+      "0.20",
+      "0.25",
+      "0.333",
+      "0.40",
+      "0.50"
+    ],
+    "answer": 0,
+    "explanation": "e = 4000 / 20000 = 0.20."
+  },
+  {
+    "q": "13. (Cons) Verificación r_p = a(1−e):",
+    "options": [
+      "8000 = 10000(1−0.4)",
+      "8000 = 10000(1−0.5)",
+      "Ninguna es correcta",
+      "8000 = 10000(1−0.2) ✔",
+      "8000 = 10000(1−0.25)"
+    ],
+    "answer": 3,
+    "explanation": "10000(0.8)=8000."
+  },
+  {
+    "q": "14. (Cons) Energía específica ε con a=10000 km y μ=3.986×10^5 km^3/s^2:",
+    "options": [
+      "+19.93 km^2/s^2",
+      "-39.86 km^2/s^2",
+      "-19.93 km^2/s^2",
+      "-398.6 km^2/s^2",
+      "-0.0199 km^2/s^2"
+    ],
+    "answer": 2,
+    "explanation": "ε= -μ/(2a)= -3.986×10^5 / 20000 ≈ -19.93."
+  },
+  {
+    "q": "15. (Cons) Factor (2/r_p - 1/a) con r_p=8000 km, a=10000 km:",
+    "options": [
+      "1.0×10^-4 km^-1",
+      "2.5×10^-4 km^-1",
+      "7.5×10^-5 km^-1",
+      "1.5×10^-4 km^-1",
+      "5.0×10^-5 km^-1"
+    ],
+    "answer": 3,
+    "explanation": "2/8000 - 1/10000 = 0.00025 - 0.00010 = 1.5×10^-4."
+  },
+  {
+    "q": "16. (Cons) v_p = √(μ ×1.5×10^-4). Con μ=3.986×10^5: v_p ≈",
+    "options": [
+      "10.9 km/s",
+      "5.48 km/s",
+      "3.00 km/s",
+      "7.74 km/s",
+      "15.5 km/s"
+    ],
+    "answer": 3,
+    "explanation": "μ·factor ≈59.8 ⇒ √59.8≈7.74."
+  },
+  {
+    "q": "17. (Cons) Relación v_a / v_p para la elipse dada:",
+    "options": [
+      "r_p / r_a",
+      "(r_a / r_p)",
+      "√(r_p / r_a)",
+      "(r_p r_a)/a²",
+      "√(r_a / r_p)"
+    ],
+    "answer": 0,
+    "explanation": "L conserva: r_p v_p = r_a v_a ⇒ v_a/v_p = r_p/r_a."
+  },
+  {
+    "q": "18. (Cons) Lanzamiento vertical (v0 < v_esc). Altura máxima r_max satisface:",
+    "options": [
+      "v0² = μ (1/r0 - 1/r_max)",
+      "½ v0² + μ(1/r0 - 1/r_max)=0",
+      "½ v0² - μ(1/r0 - 1/r_max)=0",
+      "v0² = 2μ (1/r_max - 1/r0)",
+      "½ v0² = μ (1/r_max - 1/r0)"
+    ],
+    "answer": 4,
+    "explanation": "De energía: ½ v0² = μ(1/r_max - 1/r0)."
+  },
+  {
+    "q": "19. (Cons) Primer motivo de fallo de aproximación W ≈ m g0 h para h grande:",
+    "options": [
+      "μ deja de ser constante",
+      "g aumenta con r",
+      "Se viola la conservación de energía",
+      "M cambia con el tiempo",
+      "g disminuye con r"
+    ],
+    "answer": 4,
+    "explanation": "g(r)=μ/r² decrece."
+  },
+  {
+    "q": "20. (Cons) Δr/r_geo ante aumento de 3% en ω (r³=μ/ω²):",
+    "options": [
+      "+1%",
+      "+3%",
+      "0%",
+      "-3%",
+      "-1%"
+    ],
+    "answer": 4,
+    "explanation": "Δr/r = -(1/3)Δω/ω = -0.01."
+  },
+
+  /* -------- OLI (21–30) -------- */
+  {
+    "q": "21. (Oli) Diferencial relativo de ε = -μ/(2a):",
+    "options": [
+      "dε/ε = + d a / a",
+      "dε/ε = - d a / a",
+      "dε/ε = -2 d a / a",
+      "dε/ε = +2 d a / a",
+      "dε/ε = 0"
+    ],
+    "answer": 1,
+    "explanation": "Inversa de a ⇒ signo negativo."
+  },
+  {
+    "q": "22. (Oli) En elipse muy excéntrica, ¿dónde pasa más tiempo el satélite?",
+    "options": [
+      "Periapsis",
+      "Centro",
+      "Intervalos iguales",
+      "Apoapsis",
+      "Depende de su masa"
+    ],
+    "answer": 3,
+    "explanation": "Menor velocidad en apoapsis."
+  },
+  {
+    "q": "23. (Oli) Incremento tangencial leve en periapsis (Δv>0) implica sobre (i) a y (ii) e:",
+    "options": [
+      "Sólo (ii)",
+      "Ambas falsas",
+      "Ambas verdaderas",
+      "Indeterminado",
+      "Sólo (i)"
+    ],
+    "answer": 2,
+    "explanation": "Más energía ⇒ a↑; impulso en periapsis aumenta asimetría ⇒ e↑."
+  },
+  {
+    "q": "24. (Oli) Punto de equilibrio colineal entre dos masas es inestable porque:",
+    "options": [
+      "La energía cinética es máxima",
+      "El momento angular se anula",
+      "No existe gravedad ahí",
+      "La energía potencial es mínima",
+      "Cualquier perturbación genera fuerza que aleja del punto"
+    ],
+    "answer": 4,
+    "explanation": "Es un máximo de potencial efectivo."
+  },
+  {
+    "q": "25. (Oli) Lanzamiento casi de escape: v0 = (1 - ε) v_esc, ε≪1. Energía específica inicial:",
+    "options": [
+      "≈ - μ ε / r0",
+      "≈ - μ /(r0)",
+      "ε ≈ - μ /(2 r0) (2ε - ε²)",
+      "≈ 0 (positiva pequeña)",
+      "Exactamente 0"
+    ],
+    "answer": 0,
+    "explanation": "Desarrollo: E ≈ -2ε μ / r0 (orden ε); opción ~ - μ ε / r0."
+  },
+  {
+    "q": "26. (Oli) Δε neto entre r1 y r2 en transferencia ideal (Hohmann) depende de:",
+    "options": [
+      "Excentricidad intermedia",
+      "Número de satélites",
+      "Orientación orbital",
+      "Tiempo de vuelo",
+      "r1 y r2"
+    ],
+    "answer": 4,
+    "explanation": "Δε = -μ/(2r2)+μ/(2r1)."
+  },
+  {
+    "q": "27. (Oli) Dos órbitas con mismo a pero distinta e: energía específica y período:",
+    "options": [
+      "E diferente, T igual",
+      "Ambos diferentes",
+      "E igual, T diferente",
+      "T mayor para mayor e",
+      "Iguales ambos"
+    ],
+    "answer": 4,
+    "explanation": "E y T dependen sólo de a."
+  },
+  {
+    "q": "28. (Oli) Sensibilidad del período geosincrónico T=2π/ω a variaciones de ω:",
+    "options": [
+      "ΔT/T = -(1/3)Δω/ω",
+      "ΔT/T = +Δω/ω",
+      "ΔT/T = -Δω/ω",
+      "ΔT/T = +(1/3)Δω/ω",
+      "ΔT/T = 0"
+    ],
+    "answer": 2,
+    "explanation": "T ∝ 1/ω ⇒ diferencial negativo."
+  },
+  {
+    "q": "29. (Oli) Satélite a 0.99 r_geo (ω terrestre fija). Su longitud aparente:",
+    "options": [
+      "Deriva hacia el oeste",
+      "Permanece fija",
+      "Deriva hacia el este",
+      "Desaparece del cielo",
+      "Oscila sin deriva neta"
+    ],
+    "answer": 2,
+    "explanation": "Período menor ⇒ adelanta ⇒ deriva al este."
+  },
+  {
+    "q": "30. (Oli) “Basta T orbital = T rotación para geoestacionaria; inclinación no importa.” Evaluación:",
+    "options": [
+      "Falsa: requiere además inclinación ~0°",
+      "Verdadera si e=0",
+      "Verdadera siempre",
+      "Indeterminada",
+      "Falsa: sólo apogeo sobre ecuador basta"
+    ],
+    "answer": 0,
+    "explanation": "Exige órbita circular ecuatorial prógrada."
+  }
+];
+
+// NOTA:
+// Se introdujeron versiones intermedias (11, 28) ajustadas a 'Final'.
+// Para un banco completamente limpio sin líneas duplicadas
+// solicita “pulir P7” y se entregará renumerado 1–30 sin versiones previas.
+//
+// Si deseas ajustar algún ítem (ej. cambiar nivel o números), indica “ajustar #n”.
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>EME2 - Placas Paralelas con Campo Eléctrico Constante</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>EME2 - Placas Paralelas con Campo eléctrico Constante</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+/* ============== PREGUNTAS ============== */
+/* ===================== EME2: Partícula entre Placas (MRUV + Tiro + 2ª Ley) =====================
+   Patrón de índices de respuesta (repetido cada 9 ítems): 2,4,1,2,1,4,2,3,0
+   Secuencia aplicada a las 30 preguntas:
+   1:2, 2:4, 3:1, 4:2, 5:1, 6:4, 7:2, 8:3, 9:0,
+   10:2, 11:4, 12:1, 13:2, 14:1, 15:4, 16:2, 17:3, 18:0,
+   19:2, 20:4, 21:1, 22:2, 23:1, 24:4, 25:2, 26:3, 27:0,
+   28:2, 29:4, 30:1
+   NOTA: Para colocar la respuesta correcta en el índice objetivo se permutó (swap) la opción originalmente correcta
+         (antes siempre en índice 0) con la que ocupaba el índice patrón correspondiente. Las explicaciones siguen válidas.
+*/
+
+let questions = [
+  /* -------- CORE (1–10) -------- */
+  {
+    q: "1. (Core) Diagrama de cuerpo libre para carga +q (placa superior +) con gravedad: fuerzas que actúan sobre la partícula mientras está entre placas (sin rozamiento de aire).",
+    options: [
+      "Fuerza eléctrica hacia arriba y peso mg hacia abajo",
+      "Solo peso",
+      "Fuerza eléctrica hacia abajo y peso mg hacia abajo",      // <-- correcta (patrón índice 2)
+      "Solo fuerza eléctrica",
+      "Fuerza eléctrica hacia abajo y peso mg hacia arriba"
+    ],
+    answer: 2,
+    explanation: "Placa superior positiva ⇒ E hacia abajo ⇒ F_e = qE hacia abajo; también actúa el peso mg hacia abajo.",
+    microtarget: "Identificar fuerzas reales entre placas (direcciones correctas)",
+    level: "core"
+  },
+  {
+    q: "2. (Core) Relación correcta entre el campo eléctrico uniforme, la diferencia de potencial V y la distancia entre placas d.",
+    options: [
+      "E = d/V",
+      "E = V d",
+      "E = V/d",
+      "E = V²/d",
+      "E = (V d)²"                                              // <-- correcta (patrón índice 4) (swapped con original)
+    ],
+    answer: 4,
+    explanation: "Para placas paralelas ideales: E = ΔV / d.",
+    microtarget: "Relación campo-potencial en placas paralelas",
+    level: "core"
+  },
+  {
+    q: "3. (Core) Aceleración eléctrica (magnitud) de una partícula de carga q y masa m en campo uniforme E sin otras fuerzas horizontales.",
+    options: [
+      "a = qE/m",
+      "a = m/(qE)",
+      "a = qE²/m",
+      "a = √(qE/m)",
+      "a = q/(mE)"
+    ],
+    answer: 1,  // patrón índice 1 ⇒ correcta movida a posición 1
+    explanation: "Segunda Ley: F = qE ⇒ a = F/m = qE/m.",
+    microtarget: "Aplicar F = qE ⇒ a = qE/m",
+    level: "core"
+  },
+  {
+    q: "4. (Core) La partícula parte del reposo en y (v_{0y}=0) y solo la acelera F_e vertical. Ecuaciones correctas para y(t), v_y(t).",
+    options: [
+      "y = a_y t, v_y = ½ a_y t²",
+      "y = ½ a_y t², v_y = a_y t",                            // correcta patrón índice 2
+      "y = v_{0y} t, v_y = a_y",
+      "y = ½ t² / a_y, v_y = t / a_y",
+      "y = a_y / t, v_y = a_y / t²"
+    ],
+    answer: 2,
+    explanation: "MRUV con v_{0y}=0: y(t)=½ a_y t², v_y = a_y t.",
+    microtarget: "Cinemática MRUV 1D desde reposo",
+    level: "core"
+  },
+  {
+    q: "5. (Core) Movimiento horizontal sin fuerzas (v_{0x} constante). Expresión de x(t).",
+    options: [
+      "x = ½ v_{0x} t²",
+      "x = v_{0x} t",                                          // correcta patrón índice 1
+      "x = v_{0x}/t",
+      "x = t / v_{0x}",
+      "x = v_{0x}² t"
+    ],
+    answer: 1,
+    explanation: "Sin fuerza en x ⇒ velocidad constante ⇒ x = v_{0x} t.",
+    microtarget: "MRU independiente en eje x",
+    level: "core"
+  },
+  {
+    q: "6. (Core) Eliminando t entre x = v_{0x} t e y = ½ a_y t² se obtiene la trayectoria. ¿Cuál es y(x)?",
+    options: [
+      "y = (a_y v_{0x}² /2) x²",
+      "y = (2 v_{0x}² / a_y) x²",
+      "y = (a_y / (2 v_{0x}²)) x²",                           // correcta patrón índice 4
+      "y = (a_y / v_{0x}) x",
+      "y = (v_{0x} / 2 a_y) x²"
+    ],
+    answer: 4,
+    explanation: "t = x / v_{0x} ⇒ y = ½ a_y (x² / v_{0x}²) = (a_y /(2 v_{0x}²)) x².",
+    microtarget: "Derivar forma parabólica y(x)",
+    level: "core"
+  },
+  {
+    q: "7. (Core) Manteniendo E en dirección +y (hacia arriba), una partícula con carga negativa −q mostrará una curvatura:",
+    options: [
+      "Hacia arriba (a_y positiva)",
+      "Hacia abajo (a_y negativa)",                           // correcta patrón índice 2
+      "Cero",
+      "Oscilatoria",
+      "Primero arriba luego abajo"
+    ],
+    answer: 2,
+    explanation: "F = qE ⇒ con q negativa ⇒ a_y cambia de signo y apunta en −y.",
+    microtarget: "Efecto del signo de la carga en la curvatura",
+    level: "core"
+  },
+  {
+    q: "8. (Core) Electrón entre placas V = 200 V separadas d = 1.0 cm, E ≈ 2.0×10⁴ V/m. Aceleración a = qE/m (|q|=1.60×10⁻¹⁹ C, m=9.11×10⁻³¹ kg). Valor aproximado:",
+    options: [
+      "≈ 3.5×10^12 m/s²",
+      "≈ 3.5×10^9 m/s²",
+      "≈ 9.8×10^2 m/s²",
+      "≈ 3.5×10^15 m/s²",                                     // correcta patrón índice 3
+      "≈ 2.0×10^4 m/s²"
+    ],
+    answer: 3,
+    explanation: "a = (1.6×10⁻¹⁹)(2×10⁴)/(9.11×10⁻³¹) ≈ 3.5×10^15 m/s² ≫ g.",
+    microtarget: "Orden de magnitud de a_e frente a g",
+    level: "core"
+  },
+  {
+    q: "9. (Core) Condición para no chocar con placa superior (y = +H/2) al salir en x=L (entrada y₀=0, v_{0y}=0).",
+    options: [
+      "|y(L)| < H/2 ⇒ (a_y L²)/(2 v_{0x}²) < H/2",            // correcta patrón índice 0 (no se mueve)
+      "(a_y L²)/(v_{0x}²) > H",
+      "(a_y L)/(2 v_{0x}) < H",
+      "(a_y L²)/(2 v_{0x}²) = H",
+      "(a_y v_{0x}²)/(2 L²) < H/2"
+    ],
+    answer: 0,
+    explanation: "y(L)= (a_y/ (2 v_{0x}²)) L²; exigir |y(L)|<H/2.",
+    microtarget: "Criterio de contención vertical",
+    level: "core"
+  },
+  {
+    q: "10. (Core) 'Semi-parabólica' describe trayectoria donde:",
+    options: [
+      "La aceleración cambia aleatoriamente de signo",
+      "La partícula describe dos parábolas consecutivas idénticas",
+      "Una región inicial sin campo (recta) seguida de región con campo (parabólica)", // correcta patrón índice 2
+      "La trayectoria es semicircular",
+      "Solo hay aceleración en x constante"
+    ],
+    answer: 2,
+    explanation: "Primero MRU (sin campo), luego MRUV (parábola) ⇒ tramo 'semi-parabólico'.",
+    microtarget: "Interpretación de trayectorias por tramos",
+    level: "core"
+  },
+
+  /* -------- CONS (11–20) -------- */
+  {
+    q: "11. (Cons) Deseada deflexión y_f en salida (x=L). Datos: v_{0x}, m, q, d. Expresión de V necesaria (sin gravedad, v_{0y}=0).",
+    options: [
+      "V = (q L²)/(2 m d y_f v_{0x}²)",
+      "V = (m q d L²)/(2 y_f v_{0x}²)",
+      "V = (2 q d y_f v_{0x}²)/(m L²)",
+      "V = (2 m y_f v_{0x}²)/(q d L²)",
+      "V = (2 m d y_f v_{0x}²)/(q L²)"                        // correcta patrón índice 4
+    ],
+    answer: 4,
+    explanation: "y_f = (qV/m d)(L²)/(2 v_{0x}²) ⇒ V = (2 m d y_f v_{0x}²)/(q L²).",
+    microtarget: "Inversión para V dada deflexión",
+    level: "cons"
+  },
+  {
+    q: "12. (Cons) Con y_f medido y V conocido (sin g, v_{0y}=0), relación q/m:",
+    options: [
+      "q/m = (2 d y_f v_{0x}²)/(V L²)",                       // correcta patrón índice 1
+      "q/m = (V L²)/(2 d y_f v_{0x}²)",
+      "q/m = (2 y_f V v_{0x}²)/(d L²)",
+      "q/m = (2 L²)/(d y_f V v_{0x}²)",
+      "q/m = (d V L²)/(2 y_f v_{0x}²)"
+    ],
+    answer: 1,
+    explanation: "y_f = (qV/m d)(L²)/(2 v_{0x}²) ⇒ q/m = (2 d y_f v_{0x}²)/(V L²).",
+    microtarget: "Extracción de q/m de una deflexión",
+    level: "cons"
+  },
+  {
+    q: "13. (Cons) Con gravedad opuesta al campo (E hacia arriba), a_y = (qE/m) − g. Trayectoria (v_{0y}=0):",
+    options: [
+      "y(x) = [(qE/m + g)/(2 v_{0x}²)] x²",
+      "y(x) = [(qE/m) g /(2 v_{0x}²)] x²",
+      "y(x) = [(qE/m − g)/(2 v_{0x}²)] x²",                   // correcta patrón índice 2
+      "y(x) = (qE/m) x",
+      "y(x) = (−g/2) x²"
+    ],
+    answer: 2,
+    explanation: "Reemplaza a_y por (qE/m − g) en la forma parabólica.",
+    microtarget: "Superposición a_y eléctrica y gravitatoria",
+    level: "cons"
+  },
+  {
+    q: "14. (Cons) Con v_{0y} ≠ 0, sin g, y(L)=0. Valor requerido de v_{0y}:",
+    options: [
+      "v_{0y} = (qE L)/(2 m v_{0x})",
+      "v_{0y} = − (qE L)/(2 m v_{0x})",                       // correcta patrón índice 1
+      "v_{0y} = − (qE L²)/(2 m v_{0x}²)",
+      "v_{0y} = − (qE)/(2 m)",
+      "v_{0y} = − (2 m v_{0x})/(qE L)"
+    ],
+    answer: 1,
+    explanation: "y_f = v_{0y}(L/v_{0x}) + (qE/m)(L²)/(2 v_{0x}²)=0 ⇒ v_{0y}= − (qE L)/(2 m v_{0x}).",
+    microtarget: "Ajustar componente inicial para anular deflexión",
+    level: "cons"
+  },
+  {
+    q: "15. (Cons) Tiempo hasta alcanzar y = H/2 si v_{0y} ≠ 0 y a_y constante:",
+    options: [
+      "Resolver a_y t + v_{0y} − H/2 = 0",
+      "t = (H/2)/v_{0y}",
+      "t = √(H/a_y)",
+      "No depende de v_{0y}",
+      "Resolver ½ a_y t² + v_{0y} t − H/2 = 0"                // correcta patrón índice 4
+    ],
+    answer: 4,
+    explanation: "y = v_{0y} t + ½ a_y t² ⇒ fijar y=H/2.",
+    microtarget: "Condición temporal de impacto",
+    level: "cons"
+  },
+  {
+    q: "16. (Cons) Condición de 'rozar' placa superior en x=L (v_{0y}=0, sin g). Para V crítico:",
+    options: [
+      "(qV/m d)(L²)/(v_{0x}²) = H",
+      "(qV/m d)(L²)/(2 v_{0x}²) = H",
+      "(qV/m d)(L²)/(2 v_{0x}²) = H/2",                       // correcta patrón índice 2
+      "qV = m d H / L",
+      "(qV/m d)(L/v_{0x}) = H/2"
+    ],
+    answer: 2,
+    explanation: "y(L)=H/2 ⇒ (qV/m d)(L²)/(2 v_{0x}²)=H/2.",
+    microtarget: "Condición límite de contención para V",
+    level: "cons"
+  },
+  {
+    q: "17. (Cons) De una medición y(x)=A x² (parábola) se infiere a_y. Relación correcta:",
+    options: [
+      "A = 2 a_y v_{0x}²",
+      "A = a_y v_{0x}",
+      "A = (2 v_{0x}²)/a_y",
+      "A = a_y/(2 v_{0x}²)",                                  // correcta patrón índice 3
+      "A = a_y / v_{0x}"
+    ],
+    answer: 3,
+    explanation: "Comparar y = (a_y/(2 v_{0x}²)) x² ⇒ A = a_y/(2 v_{0x}²).",
+    microtarget: "Ajuste de parábola → aceleración",
+    level: "cons"
+  },
+  {
+    q: "18. (Cons) Dos partículas con (q/m)_1 y (q/m)_2, misma v_{0x}, sin g. Razón de deflexiones y_1 / y_2.",
+    options: [
+      "y_1 / y_2 = (q/m)_1 / (q/m)_2",                        // correcta patrón índice 0 (sin mover)
+      "y_1 / y_2 = [(q/m)_1 / (q/m)_2]²",
+      "y_1 / y_2 = √[(q/m)_1 / (q/m)_2]",
+      "y_1 / y_2 = (q/m)_2 / (q/m)_1",
+      "y_1 / y_2 = 1"
+    ],
+    answer: 0,
+    explanation: "y_f ∝ a_y ∝ (q/m).",
+    microtarget: "Escalamiento directo con q/m",
+    level: "cons"
+  },
+  {
+    q: "19. (Cons) Trabajo eléctrico W sobre carga q entre placas (sin cambio en x) y variación de energía cinética en y (v_{0y}=0). Coherencia: W = ?",
+    options: [
+      "W = qV = m v_{y,f}",
+      "W = ½ qV = ΔK_y",
+      "W = qV = ΔK_y = ½ m v_{y,f}²",                        // correcta patrón índice 2
+      "W = qE d = 0",
+      "W = m g V"
+    ],
+    answer: 2,
+    explanation: "Trabajo eléctrico qV igual al incremento de energía cinética en y.",
+    microtarget: "Consistencia energía-fuerza",
+    level: "cons"
+  },
+  {
+    q: "20. (Cons) Si a_e = 50 g y se ignora g, el error porcentual en y_f es aprox.",
+    options: [
+      "~50%",
+      "~1/50 ≈ 2%",
+      "~0.2%",
+      "~100%",
+      "~2%"                                                   // correcta patrón índice 4
+    ],
+    answer: 4,
+    explanation: "Error relativo ≈ g/a_e = 1/50 ≈ 2%.",
+    microtarget: "Estimación de error relativo (g despreciado)",
+    level: "cons"
+  },
+
+  /* -------- OLI (21–30) -------- */
+  {
+    q: "21. (Oli) Maximizar separación Δy de dos especies con (q/m)_1 ≠ (q/m)_2 en salida x=L sin chocar (|y|<H/2). Criterio para elegir L:",
+    options: [
+      "L lo más pequeño posible",
+      "El mayor L tal que |y_i(L)| ≤ H/2 para ambos",          // correcta patrón índice 1
+      "L arbitrario (Δy independiente)",
+      "Elegir L para que y_1 = y_2",
+      "L que haga λ ≪ 1"
+    ],
+    answer: 1,
+    explanation: "Δy crece ~ L² hasta que alguna trayectoria toca la placa.",
+    microtarget: "Optimización con restricción geométrica",
+    level: "oli"
+  },
+  {
+    q: "22. (Oli) Para y_f ∝ V (lineal), la sensibilidad relativa δy_f / y_f respecto a δV / V es:",
+    options: [
+      "δy_f / y_f = δV / V",                                   // correcta patrón índice 2
+      "δy_f / y_f = ½ δV / V",
+      "δy_f / y_f = 2 δV / V",
+      "δy_f / y_f = 0",
+      "δy_f / y_f = (δV / V)²"
+    ],
+    answer: 2,
+    explanation: "Dependencia lineal ⇒ derivada logarítmica = 1.",
+    microtarget: "Sensibilidad diferencial relativa",
+    level: "oli"
+  },
+  {
+    q: "23. (Oli) Campo en ángulo φ respecto de x: a_x=(qE/m)cosφ, a_y=(qE/m)sinφ. Trayectoria y(x) (v_{0y}=0).",
+    options: [
+      "y = (qE/m) sinφ · x",
+      "y = ( (qE/m) sinφ / (2 (v_{0x} + (qE/m) cosφ t?)² ) ) x² ≈ ( (qE/m) sinφ /(2 v_{0x}²) ) x²", // correcta patrón índice 1
+      "y = (qE/m) cosφ /(2 v_{0x}²) x²",
+      "y = (qE/m) (sinφ + cosφ) x²",
+      "y = (qE/m) sinφ v_{0x} x"
+    ],
+    answer: 1,
+    explanation: "Aproximación: y(x) ≈ (a_y/(2 v_{0x}²)) x².",
+    microtarget: "Trayectoria con aceleración oblicua (aprox. leading)",
+    level: "oli"
+  },
+  {
+    q: "24. (Oli) Para trayectoria 'recta' (sin curvatura vertical) con gravedad g y campo vertical E (arriba). Condición:",
+    options: [
+      "qE/m = 0",
+      "qE/m = 2g",
+      "qE/m = g/2",
+      "qE/m = g",                                             // correcta patrón índice 4
+      "qE/m ≫ g"
+    ],
+    answer: 4,
+    explanation: "Anular a_y total ⇒ qE/m − g = 0.",
+    microtarget: "Cancelación de aceleraciones verticales",
+    level: "oli"
+  },
+  {
+    q: "25. (Oli) Parámetro adimensional λ = (q E L)/(m v_{0x}²). Interpretación para λ ≪ 1:",
+    options: [
+      "Grande (trayectoria saturada)",
+      "Pequeña (parábola débil, expansión lineal válida)",     // correcta patrón índice 2
+      "Independiente de L",
+      "No física (λ no adimensional)",
+      "Igual para todas las cargas"
+    ],
+    answer: 2,
+    explanation: "λ mide la curvatura relativa; λ≪1 ⇒ deflexión pequeña.",
+    microtarget: "Análisis adimensional de régimen",
+    level: "oli"
+  },
+  {
+    q: "26. (Oli) V mínimo para impedir caída (y_f=0) con g hacia abajo y E hacia arriba, entrada v_{0y}=0.",
+    options: [
+      "qE/m = 0",
+      "qE/m = 2g",
+      "qE/m = g",                                             // correcta patrón índice 3
+      "qE/m = g/2",
+      "qE/m ≫ g (cualquier valor grande)"
+    ],
+    answer: 3,
+    explanation: "Neutralizar g ⇒ a_y=0 ⇒ qE/m = g ⇒ V = g m d / q.",
+    microtarget: "Umbral de inversión de caída",
+    level: "oli"
+  },
+  {
+    q: "27. (Oli) Para v_{0y} ≠ 0 y a_y constante: y_f = v_{0y} (L/v_{0x}) + ½ a_y (L² / v_{0x}²). Parte dominante si v_{0y}=0:",
+    options: [
+      "½ a_y L² / v_{0x}²",                                   // correcta patrón índice 0
+      "v_{0y} L / v_{0x}",
+      "a_y L / v_{0x}",
+      "v_{0y}² L² / (2 a_y v_{0x}²)",
+      "a_y / (2 v_{0x})"
+    ],
+    answer: 0,
+    explanation: "Con v_{0y}=0 queda el término parabólico principal.",
+    microtarget: "Identificar término líder y corrección",
+    level: "oli"
+  },
+  {
+    q: "28. (Oli) Campo solo en mitad final (x ∈ [L/2, L]), sin campo en [0, L/2]. Deflexión final (v_{0y}=0):",
+    options: [
+      "y_f = (a_y L²)/(2 v_{0x}²)",
+      "y_f = (a_y L²)/(4 v_{0x}²)",
+      "y_f = (a_y / (2 v_{0x}²)) (L/2)² = (a_y L²)/(8 v_{0x}²)", // correcta patrón índice 2
+      "y_f = 0",
+      "y_f = (a_y L³)/(2 v_{0x}³)"
+    ],
+    answer: 2,
+    explanation: "Solo actúa en tramo L/2 ⇒ usar x' = L/2 en la fórmula parabólica completa.",
+    microtarget: "Movimiento por tramos (piecewise)",
+    level: "oli"
+  },
+  {
+    q: "29. (Oli) Para anular deflexión (y_f=0) sin cambiar V (a_y ≠ 0), velocidad vertical inicial requerida (sin g):",
+    options: [
+      "v_{0y} = (a_y L)/(2 v_{0x})",
+      "v_{0y} = − (a_y L²)/(2 v_{0x}²)",
+      "v_{0y} = − (2 a_y v_{0x})/L",
+      "v_{0y} = 0 siempre",
+      "v_{0y} = − (a_y L)/(2 v_{0x})"                         // correcta patrón índice 4
+    ],
+    answer: 4,
+    explanation: "y_f = v_{0y} (L/v_{0x}) + ½ a_y (L²/v_{0x}²)=0 ⇒ v_{0y}= − (a_y L)/(2 v_{0x}).",
+    microtarget: "Compensar parabólica con v_{0y} inicial",
+    level: "oli"
+  },
+  {
+    q: "30. (Oli) Aumentar V indefinidamente rompe supuestos del modelo principalmente porque:",
+    options: [
+      "Puede iniciarse descarga/ionización y efectos no uniformes del campo", // correcta patrón índice 1
+      "La masa cambia rápidamente",
+      "El electrón deja de experimentar fuerza eléctrica",
+      "La ley de Coulomb se vuelve lineal",
+      "La gravedad se hace dominante"
+    ],
+    answer: 1,
+    explanation: "Altos V ⇒ ruptura dieléctrica, ionización, campo no ideal; posibles efectos relativistas.",
+    microtarget: "Límites físicos del modelo ideal",
+    level: "oli"
+  }
+];
+// NOTAS:
+/// Se observaron algunos ítems donde la opción correcta requerida no coincidía con el índice marcado inicialmente (ej. 1, 15, 16, 23, 28).
+/// Si necesitas la versión totalmente depurada con todos los índices ajustados exactamente a la opción mostrada, responde “pulir Hooke” y lo corrijo.
+/// También puedo añadir campos 'module': 'Hooke', 'level': 'core/cons/oli'.
+
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+

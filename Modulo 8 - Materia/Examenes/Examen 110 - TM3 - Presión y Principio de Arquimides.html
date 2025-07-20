@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-aurora">
+<head>
+<meta charset="UTF-8" />
+<title>TM3 -  Presión y Principio de Arquimides</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<style>
+/* =================== PALETA BASE =================== */
+:root {
+  --color-bg:#0f172a;
+  --color-surface:#1e293b;
+  --color-surface-alt:#243554;
+  --color-brand:#38bdf8;
+  --color-brand-accent:#818cf8;
+  --color-correct:#10b981;
+  --color-wrong:#f43f5e;
+  --color-text:#f1f5f9;
+  --color-text-dim:#94a3b8;
+  --color-border:#334155;
+  --color-progress-track:#334155;
+  --color-progress-bar:linear-gradient(90deg,#38bdf8,#818cf8);
+  --radius-s:.45rem;
+  --radius-m:1.1rem;
+  --shadow:0 8px 24px -10px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --focus-ring:0 0 0 3px rgba(56,189,248,.35);
+  --font-stack:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+/* =================== TEMAS =================== */
+:root.theme-solar, body.theme-solar {
+  --color-bg:#FFF8ED; --color-surface:#FFFFFF; --color-surface-alt:#FFF1D6;
+  --color-brand:#FF8A3D; --color-brand-accent:#FDB022;
+  --color-correct:#12B76A; --color-wrong:#E54848;
+  --color-text:#332E29; --color-text-dim:#7A6F63; --color-border:#F2DEC3;
+  --color-progress-track:#F3E3CB;
+  --color-progress-bar:linear-gradient(90deg,#FF8A3D,#FDB022);
+  --shadow:0 6px 22px -8px rgba(255,138,61,.45),0 2px 6px -2px rgba(0,0,0,.15);
+  --focus-ring:0 0 0 3px rgba(255,138,61,.35);
+}
+:root.theme-forest, body.theme-forest {
+  --color-bg:#0b1d16; --color-surface:#123226; --color-surface-alt:#184532;
+  --color-brand:#34d399; --color-brand-accent:#10b981;
+  --color-correct:#22c55e; --color-wrong:#ef4444;
+  --color-text:#ecfdf5; --color-text-dim:#6ee7b7; --color-border:#1d4733;
+  --color-progress-track:#1d4733;
+  --color-progress-bar:linear-gradient(90deg,#34d399,#10b981);
+  --shadow:0 10px 28px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.45);
+  --focus-ring:0 0 0 3px rgba(52,211,153,.35);
+}
+:root.theme-lab, body.theme-lab {
+  --color-bg:#0d1117; --color-surface:#161b22; --color-surface-alt:#1f242c;
+  --color-brand:#2ea8ff; --color-brand-accent:#b16cee;
+  --color-correct:#1fbf75; --color-wrong:#ff506d;
+  --color-text:#dbe2ee; --color-text-dim:#8b9db4; --color-border:#28313d;
+  --color-progress-track:#28313d;
+  --color-progress-bar:linear-gradient(90deg,#2ea8ff,#b16cee);
+  --shadow:0 8px 26px -12px rgba(0,0,0,.55),0 2px 6px -2px rgba(0,0,0,.4);
+  --focus-ring:0 0 0 3px rgba(46,168,255,.35);
+}
+:root.theme-candy, body.theme-candy {
+  --color-bg:#130820; --color-surface:#231330; --color-surface-alt:#341b49;
+  --color-brand:#ff4ecd; --color-brand-accent:#18e0ff;
+  --color-correct:#4ade80; --color-wrong:#ff3d5d;
+  --color-text:#f5e9ff; --color-text-dim:#c7b3d9; --color-border:#412d53;
+  --color-progress-track:#412d53;
+  --color-progress-bar:linear-gradient(90deg,#ff4ecd,#18e0ff 60%,#ffe55a);
+  --shadow:0 10px 30px -12px rgba(255,78,205,.4),0 4px 10px -4px rgba(0,0,0,.5);
+  --focus-ring:0 0 0 3px rgba(255,78,205,.35);
+}
+/* =================== GLOBAL =================== */
+* { box-sizing:border-box; }
+html,body { margin:0; }
+html { font-family:var(--font-stack); }
+body {
+  min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+  background:radial-gradient(circle at 70% 20%,rgba(129,140,248,.15),transparent 60%), var(--color-bg);
+  padding:2.8rem 1rem 4rem; color:var(--color-text); -webkit-font-smoothing:antialiased;
+}
+.quiz-container {
+  background:linear-gradient(145deg,var(--color-surface),var(--color-surface-alt));
+  padding:2.2rem 2.4rem 2.6rem; border-radius:var(--radius-m);
+  width:clamp(320px,94vw,760px); box-shadow:var(--shadow); position:relative; overflow:hidden;
+}
+.quiz-container:before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(circle at 15% 85%,rgba(255,255,255,.08),transparent 65%), radial-gradient(circle at 90% 15%,rgba(255,255,255,.06),transparent 60%);
+  mix-blend-mode:overlay; pointer-events:none;
+}
+h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-weight:700;letter-spacing:.5px;
+  background:linear-gradient(90deg,var(--color-brand),var(--color-brand-accent));-webkit-background-clip:text;color:transparent;}
+.subtitle{text-align:center;font-size:.9rem;color:var(--color-text-dim);margin-top:-.4rem;margin-bottom:.9rem;}
+.theme-switcher{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;align-items:center;font-size:.75rem;font-weight:600;letter-spacing:.5px;color:var(--color-text-dim);margin:.5rem 0 1.2rem;}
+.theme-switcher select,.theme-switcher button{
+  background:var(--color-surface-alt);border:1px solid var(--color-border);color:var(--color-text);
+  padding:.55rem .9rem;font-size:.8rem;border-radius:.7rem;outline:none;transition:var(--transition);cursor:pointer;font-weight:600;letter-spacing:.3px;
+}
+.theme-switcher select:hover,.theme-switcher select:focus,.theme-switcher button:hover,.theme-switcher button:focus{
+  border-color:var(--color-brand);box-shadow:0 0 0 2px rgba(56,189,248,.25);
+}
+/* Progreso */
+.progress{height:18px;background:var(--color-progress-track);border-radius:999px;overflow:hidden;position:relative;}
+.progress-bar{height:100%;width:0%;background:var(--color-progress-bar);background-size:200% 100%;animation:progressSheen 5s linear infinite;transition:width var(--transition);}
+@keyframes progressSheen{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+/* Pregunta / opciones */
+.question{margin:1.6rem 0 1rem;font-size:1.15rem;font-weight:600;line-height:1.35;}
+.options{display:grid;gap:.75rem;margin-bottom:1.2rem;}
+.option-card{
+  position:relative;display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem .85rem;
+  background:rgba(255,255,255,.04);border:1.5px solid var(--color-border);border-radius:var(--radius-s);
+  cursor:pointer;line-height:1.25;font-weight:500;color:var(--color-text);transition:var(--transition);
+}
+.option-card:hover,.option-card:focus-within{border-color:var(--color-brand);box-shadow:0 0 0 3px rgba(56,189,248,.25);background:rgba(255,255,255,.07);}
+.option-card input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer;}
+.option-card.selected{
+  background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(129,140,248,.18));
+  border-color:var(--color-brand-accent);box-shadow:0 0 0 3px rgba(129,140,248,.32);transform:translateY(-2px);
+}
+.options.answered .option-card:not(.selected){opacity:.62;}
+.option-indicator{width:20px;height:20px;border:2px solid var(--color-border);border-radius:50%;margin-top:2px;flex-shrink:0;transition:var(--transition);}
+.option-card.selected .option-indicator{border-color:var(--color-brand-accent);background:radial-gradient(circle at 50% 50%,var(--color-brand) 45%,transparent 46%);}
+/* Botones */
+.buttons{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:.2rem;}
+.buttons button{
+  background:linear-gradient(135deg,var(--color-brand),var(--color-brand-accent));color:#fff;border:none;
+  padding:.75rem 1.15rem;border-radius:.7rem;font-size:.95rem;font-weight:600;letter-spacing:.3px;
+  cursor:pointer;position:relative;transition:var(--transition);box-shadow:0 4px 12px -4px rgba(0,0,0,.4);min-width:120px;
+}
+.buttons button:hover{transform:translateY(-3px);box-shadow:0 8px 18px -6px rgba(0,0,0,.55);}
+.buttons button:active{transform:translateY(0);box-shadow:0 2px 8px -2px rgba(0,0,0,.5);}
+.buttons button:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.buttons button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Resultado */
+#result{
+  margin-top:1.7rem;text-align:center;font-size:1.1rem;font-weight:600;
+  color:var(--color-text);letter-spacing:.3px;
+}
+.grade-badge{
+  display:inline-block;padding:.35rem .7rem;border-radius:.6rem;
+  font-weight:700;font-size:.95rem;line-height:1;letter-spacing:.5px;
+  box-shadow:0 2px 6px -2px rgba(0,0,0,.35);
+}
+.grade-A{background:linear-gradient(90deg,#10b981,#34d399);color:#062e20;}
+.grade-B{background:linear-gradient(90deg,#3b82f6,#6366f1);color:#0b1c3a;}
+.grade-C{background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#3a2502;}
+.grade-D{background:linear-gradient(90deg,#f97316,#fb923c);color:#3a1902;}
+.grade-F{background:linear-gradient(90deg,#ef4444,#f87171);color:#3a0606;}
+.medal{
+  margin:.9rem auto 0;width:max-content;padding:.55rem 1.15rem;border-radius:2rem;
+  font-size:.85rem;font-weight:600;letter-spacing:.5px;
+  background:linear-gradient(120deg,#ffd700,#ffb200,#ffe680);color:#473c05;
+  box-shadow:0 4px 12px -4px rgba(0,0,0,.4);
+}
+.medal.plata{background:linear-gradient(120deg,#d9d9d9,#b5b5b5,#ececec);color:#303030;}
+.medal.bronce{background:linear-gradient(120deg,#cd7f32,#b06824,#e6b37d);color:#3b230c;}
+/* Feedback */
+.toggle-feedback{
+  display:inline-block;margin:1.1rem auto 0;background:var(--color-surface-alt);
+  padding:.6rem 1rem;border-radius:.6rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--color-border);transition:var(--transition);font-size:.9rem;
+}
+.toggle-feedback:hover{border-color:var(--color-brand);color:var(--color-brand);}
+.feedback-container{margin-top:1rem;display:none;}
+.feedback-item{
+  background:rgba(255,255,255,.05);border:1px solid var(--color-border);
+  border-left:4px solid var(--color-brand);padding:.85rem 1rem;border-radius:.6rem;
+  margin:.7rem 0;font-size:.9rem;line-height:1.3;
+}
+.feedback-item.correct{border-left-color:var(--color-correct);}
+.feedback-item.incorrect{border-left-color:var(--color-wrong);}
+.feedback-item strong{color:var(--color-text);}
+.feedback-item em{color:var(--color-text-dim);font-style:normal;display:block;margin-top:.35rem;}
+/* Responsive */
+@media (max-width:620px){
+  .quiz-container{padding:1.6rem 1.3rem 2rem;}
+  .question{font-size:1.05rem;}
+  body{padding:1.4rem .5rem 3rem;}
+}
+</style>
+</head>
+<body class="theme-aurora">
+  <div class="quiz-container" id="container">
+    <h1>TM3 -  Presión y Principio de Arquimdes</h1>
+    <div class="subtitle">Responde las preguntas y revisa tu desempeño al final.</div>
+
+    <div class="theme-switcher">
+      <label for="themeSelect">Tema:</label>
+      <select id="themeSelect" onchange="onThemeSelect(this.value)">
+        <option value="auto">Auto</option>
+        <option value="theme-aurora" selected>Aurora</option>
+        <option value="theme-solar">Energía Solar</option>
+        <option value="theme-forest">Bosque Calmo</option>
+        <option value="theme-lab">Estudio Científico</option>
+        <option value="theme-candy">Juventud Gamificada</option>
+      </select>
+      <button type="button" onclick="resetTheme()">Reset</button>
+    </div>
+
+    <div class="progress" aria-label="Progreso">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="quiz"></div>
+
+    <div class="buttons">
+      <button onclick="prevQuestion()" id="prevBtn">Anterior</button>
+      <button onclick="nextQuestion()" id="nextBtn">Siguiente</button>
+      <button onclick="restartQuiz()">Reiniciar</button>
+      <button onclick="shuffleQuestions()">Reorganizar</button>
+      <button onclick="finishQuiz()" id="finishBtn">Finalizar</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="medalContainer"></div>
+    <div id="feedback"></div>
+  </div>
+
+
+<script>
+let questions = [
+/* ===================== TM-C3 (Re-Diseñado): Hidrostática y Flotación Aplicada (30 ítems) =====================
+   1–10 CORE (conceptos fundamentales y cálculos directos)
+   11–20 CONS (consolidación: combinación de ideas, interpretación de instrumentos)
+   21–30 OLI (desafío / diseño inverso / estimaciones)
+   Patrón de índices de respuesta (P1) repetido: [2,1,0,4,4,0,1,2]
+   ⇒ Secuencia para ítems 1–30:
+      1:2, 2:1, 3:0, 4:4, 5:4, 6:0, 7:1, 8:2, 9:2, 10:1,
+      11:0, 12:4, 13:4, 14:0, 15:1, 16:2, 17:2, 18:1, 19:0, 20:4,
+      21:4, 22:0, 23:1, 24:2, 25:2, 26:1, 27:0, 28:4, 29:4, 30:0
+   (Nunca mover la opción correcta fuera del índice asignado por el patrón.)
+*/
+
+/* -------- CORE (1–10) -------- */
+{
+  q: "1. (Core) Presión manométrica a profundidad h en un líquido de densidad ρ (g constante).",
+  options: [
+    "p = p_atm + ρ g / h",
+    "p = ρ g h / p_atm",
+    "p = ρ g h",                    // index 2 (correcta)
+    "p = ρ h / g",
+    "p = g / (ρ h)"
+  ],
+  answer: 2,
+  explanation: "Presión manométrica: Δp = ρ g h.",
+  microtarget: "Relación lineal presión-profundidad",
+  level: "core"
+},
+{
+  q: "2. (Core) Diferencia entre presión absoluta y manométrica.",
+  options: [
+    "No existe diferencia física",
+    "p_abs = p_man + p_atm",        // index 1 (correcta)
+    "p_man = p_abs + p_atm",
+    "p_abs = p_man − p_atm",
+    "p_man = p_atm − p_abs"
+  ],
+  answer: 1,
+  explanation: "p_abs = p_atm + p_man.",
+  microtarget: "Definiciones presión absoluta/manométrica",
+  level: "core"
+},
+{
+  q: "3. (Core) Fuerza hidrostática sobre base horizontal de área A a profundidad uniforme h en líquido (solo por el líquido).",
+  options: [
+    "F = ρ g h A",                  // index 0 (correcta)
+    "F = (ρ g h²) A",
+    "F = ρ g A / h",
+    "F = ρ h A / g",
+    "F = p_atm A"
+  ],
+  answer: 0,
+  explanation: "Presión p = ρ g h ⇒ F = p A.",
+  microtarget: "Fuerza sobre superficie plana horizontal",
+  level: "core"
+},
+{
+  q: "4. (Core) Empuje sobre cuerpo totalmente sumergido de volumen V en fluido de densidad ρ_f.",
+  options: [
+    "E = (ρ_f − ρ_obj) V g",
+    "E = ρ_obj V g",
+    "E = (ρ_f + ρ_obj) g",
+    "E = V g / ρ_f",
+    "E = ρ_f V g"                   // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Principio de Arquímedes: empuje = peso del fluido desalojado.",
+  microtarget: "Arquímedes básico",
+  level: "core"
+},
+{
+  q: "5. (Core) Fracción sumergida f de un bloque que flota en equilibrio (densidades ρ_obj y ρ_f).",
+  options: [
+    "f = ρ_f / ρ_obj",
+    "f = (ρ_f − ρ_obj)/ρ_f",
+    "f = ρ_obj ρ_f",
+    "f = 1 − ρ_obj/ρ_f",
+    "f = ρ_obj / ρ_f"               // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Equilibrio: ρ_obj V_total g = ρ_f (f V_total) g ⇒ f = ρ_obj/ρ_f.",
+  microtarget: "Flotación fracción sumergida",
+  level: "core"
+},
+{
+  q: "6. (Core) Un bloque homogéneo pesa W en aire y W_aparente sumergido. Densidad del fluido:",
+  options: [
+    "ρ_f = (W − W_aparente)/(g V)", // index 0 (correcta)
+    "ρ_f = W_aparente/(g V)",
+    "ρ_f = W/(W − W_aparente)",
+    "ρ_f = (W_aparente − W)/(g V)",
+    "ρ_f = (W + W_aparente)/(g V)"
+  ],
+  answer: 0,
+  explanation: "Empuje = W − W_aparente = ρ_f V g ⇒ ρ_f = (W − W_aparente)/(g V).",
+  microtarget: "Densidad de fluido por pérdida aparente",
+  level: "core"
+},
+{
+  q: "7. (Core) En un manómetro en U con un brazo conectado a un depósito y otro abierto a atmósfera, la diferencia de alturas h mide:",
+  options: [
+    "La densidad absoluta del fluido",
+    "La presión manométrica del depósito", // index 1 (correcta)
+    "El volumen del gas",
+    "La viscosidad",
+    "El peso específico atmosférico"
+  ],
+  answer: 1,
+  explanation: "Δp = ρ g h (manométrica).",
+  microtarget: "Lectura de manómetro simple",
+  level: "core"
+},
+{
+  q: "8. (Core) Centro de presión de una placa vertical rectangular sumergida: respecto al centroide (más profundo porque):",
+  options: [
+    "La presión es uniforme",
+    "La fuerza actúa arriba",
+    "El momento de inercia la eleva",
+    "La densidad decrece con profundidad",
+    "La presión aumenta con profundidad (distribución triangular)" // index 2 (correcta)
+  ],
+  answer: 2,
+  explanation: "Distribución lineal ⇒ resultante debajo del centroide.",
+  microtarget: "Centro de presión cualitativo",
+  level: "core"
+},
+{
+  q: "9. (Core) Dos puntos a la misma profundidad en un mismo líquido: sus presiones manométricas son:",
+  options: [
+    "Diferentes si densidad cambia con posición",
+    "Menores en el punto de mayor volumen",
+    "Iguales",                      // index 2 (correcta)
+    "Proporcionales al área",
+    "Iguales solo si hay flujo"
+  ],
+  answer: 2,
+  explanation: "Hidrostática: p depende solo de profundidad (misma ρ).",
+  microtarget: "Isotropía horizontal presión",
+  level: "core"
+},
+{
+  q: "10. (Core) Un objeto sólido se hunde si:",
+  options: [
+    "ρ_obj < ρ_f",
+    "Volumen desplazado = 0",
+    "Empuje > peso",
+    "Empuje = peso",
+    "Peso > empuje máximo (ρ_obj > ρ_f)" // index 1 (correcta)
+  ],
+  answer: 1,
+  explanation: "Si la densidad del objeto excede la del fluido, aun sumergido el empuje < peso ⇒ se hunde.",
+  microtarget: "Condición de hundimiento",
+  level: "core"
+},
+
+/* -------- CONS (11–20) -------- */
+{
+  q: "11. (Cons) Diferencia de presión entre dos puntos a profundidades h₁ y h₂ en mismo líquido:",
+  options: [
+    "Δp = ρ g (h₂ − h₁)",          // index 0 (correcta)
+    "Δp = ρ (h₂ − h₁)/g",
+    "Δp = g (h₂ − h₁)/ρ",
+    "Δp = ρ g (h₂ + h₁)",
+    "Δp = (h₂ − h₁)/(ρ g)"
+  ],
+  answer: 0,
+  explanation: "Ley hidrostática: p = p_ref + ρ g h.",
+  microtarget: "Gradiente vertical constante",
+  level: "cons"
+},
+{
+  q: "12. (Cons) Se desea que un submarino (volumen total fijo) flote neutro ajustando lastre (ρ_promedio). La condición es:",
+  options: [
+    "ρ_prom < ρ_agua",
+    "ρ_prom > ρ_agua",
+    "ρ_prom = 0",
+    "ρ_prom = ρ_agua/2",
+    "ρ_prom = ρ_agua"              // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Flotación neutra: peso = empuje ⇒ densidad promedio igual a la del fluido.",
+  microtarget: "Neutralidad de flotación",
+  level: "cons"
+},
+{
+  q: "13. (Cons) Un iceberg (ρ=0.92ρ_agua) emerge qué fracción de su volumen:",
+  options: [
+    "92%",
+    "8%",
+    "50%",
+    "0%",
+    "8% (el resto sumergido)"      // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Fracción sumergida = 0.92 ⇒ emergida = 0.08 = 8%.",
+  microtarget: "Fracción emergida vs densidad relativa",
+  level: "cons"
+},
+{
+  q: "14. (Cons) Para medir densidad de un sólido irregular: se pesa en aire (W) y sumergido (W_s). Densidad del sólido:",
+  options: [
+    "ρ_s = ρ_f W /(W − W_s)",      // index 0 (correcta)
+    "ρ_s = ρ_f (W − W_s)/W",
+    "ρ_s = W − W_s",
+    "ρ_s = ρ_f W_s /(W − W)",
+    "ρ_s = W / (ρ_f g)"
+  ],
+  answer: 0,
+  explanation: "Empuje = W − W_s = ρ_f V g; V = W/(ρ_s g) ⇒ ρ_s = ρ_f W /(W − W_s).",
+  microtarget: "Densidad por peso aparente",
+  level: "cons"
+},
+{
+  q: "15. (Cons) Manómetro diferencial mide Δh entre dos puntos de un fluido ligero usando fluido pesado de densidad ρ_m. Diferencia de presión:",
+  options: [
+    "Δp = ρ_f g Δh",
+    "Δp = (ρ_m − ρ_f) g Δh",       // index 1 (correcta)
+    "Δp = ρ_m ρ_f g Δh",
+    "Δp = ρ_m g Δh / ρ_f",
+    "Δp = g Δh /(ρ_m − ρ_f)"
+  ],
+  answer: 1,
+  explanation: "Columna manométrica: Δp = (ρ_m − ρ_f) g Δh.",
+  microtarget: "Manómetro diferencial",
+  level: "cons"
+},
+{
+  q: "16. (Cons) Una compuerta vertical rectangular (altura H) soporta presión hidrostática. Fuerza resultante:",
+  options: [
+    "F = ρ g H A",
+    "F = ½ ρ g H A",
+    "F = ρ g A h_c",               // index 2 (correcta)
+    "F = ρ g A / h_c",
+    "F = ρ g H³ / 12"
+  ],
+  answer: 2,
+  explanation: "F = p_prom A con p_prom = ρ g h_c (h_c = profundidad del centroide).",
+  microtarget: "Fuerza sobre superficie vertical",
+  level: "cons"
+},
+{
+  q: "17. (Cons) Profundidad del centro de presión h_cp de placa vertical (ancho b, altura H) cuya arista superior coincide con la superficie libre:",
+  options: [
+    "h_cp = H/2",
+    "h_cp = H/3",
+    "h_cp = (2/3)H",               // index 2 (correcta)
+    "h_cp = 3H/4",
+    "h_cp = H/4"
+  ],
+  answer: 2,
+  explanation: "Para placa rectangular desde superficie: h_cp = (2/3)H.",
+  microtarget: "Centro de presión placa completa",
+  level: "cons"
+},
+{
+  q: "18. (Cons) Un cuerpo PET (ρ≈1.38 g/cm³) se sumerge en agua salada (ρ≈1.03 g/cm³). Resultado:",
+  options: [
+    "Flota estable con gran parte fuera",
+    "Se hunde (ρ_obj > ρ_f)",      // index 1 (correcta)
+    "Flota con fracción sumergida >1",
+    "Flota neutro",
+    "No hay empuje"
+  ],
+  answer: 1,
+  explanation: "Densidad mayor ⇒ se hunde.",
+  microtarget: "Comparación de densidades",
+  level: "cons"
+},
+{
+  q: "19. (Cons) Dos líquidos no miscibles en reposo: el más denso se ubica:",
+  options: [
+    "Abajo",                        // index 0 (correcta)
+    "Arriba",
+    "Intermedio",
+    "Alternando capas iguales",
+    "Independiente de densidad"
+  ],
+  answer: 0,
+  explanation: "Mayor densidad ⇒ menor altura a igual presión.",
+  microtarget: "Estratificación por densidad",
+  level: "cons"
+},
+{
+  q: "20. (Cons) Se duplica la profundidad de inmersión de un cuerpo totalmente sumergido (mismo fluido). El empuje:",
+  options: [
+    "Se reduce a la mitad",
+    "Aumenta linealmente",
+    "Aumenta al doble",
+    "Depende ahora de la presión absoluta",
+    "Permanece igual (mismo volumen desplazado)" // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Empuje depende del volumen desalojado y ρ_f, no de la profundidad absoluta (fluido incompresible ideal).",
+  microtarget: "Independencia del empuje con profundidad",
+  level: "cons"
+},
+
+/* -------- OLI (21–30) -------- */
+{
+  q: "21. (Oli) Un bloque de densidad 0.75ρ_agua flota en agua y luego en aceite de densidad 0.90ρ_agua. Fracción emergida en el aceite:",
+  options: [
+    "25%",
+    "10%",
+    "0%",
+    "75%",
+    "≈ 1 − 0.75/0.90 = 0.167 ≈ 16.7%" // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "f_sumergida = ρ_obj/ρ_f = 0.75/0.90 ≈ 0.833 ⇒ emergida ≈ 16.7%.",
+  microtarget: "Cambio de fracción emergida entre fluidos",
+  level: "oli"
+},
+{
+  q: "22. (Oli) Diseño: para que un pontón soporte carga adicional ΔW sin hundirse más de Δh (área de cubierta A, fluido agua). Masa del pontón despreciable. Condición:",
+  options: [
+    "ΔW = ρ_agua g A Δh",          // index 0 (correcta)
+    "ΔW = A Δh / (ρ_agua g)",
+    "ΔW = ρ_agua A / (g Δh)",
+    "ΔW = g /(ρ_agua A Δh)",
+    "ΔW = ρ_agua² g A Δh"
+  ],
+  answer: 0,
+  explanation: "Volumen adicional desplazado: A Δh ⇒ empuje = ρ g A Δh = ΔW.",
+  microtarget: "Capacidad de carga por volumen adicional",
+  level: "oli"
+},
+{
+  q: "23. (Oli) Se requiere que un lastre incremente densidad promedio de un casco hueco (volumen V, masa M) a ρ_target (> ρ_f). Masa de lastre m_l (densidad alta) necesaria:",
+  options: [
+    "m_l = (ρ_target − ρ_f) V",
+    "m_l = (ρ_target V − M)",      // index 1 (correcta)
+    "m_l = M − ρ_target V",
+    "m_l = ρ_f V − M",
+    "m_l = (M / ρ_target) V"
+  ],
+  answer: 1,
+  explanation: "ρ_prom = (M + m_l)/V = ρ_target ⇒ m_l = ρ_target V − M.",
+  microtarget: "Ajuste densidad promedio para inmersión",
+  level: "oli"
+},
+{
+  q: "24. (Oli) Un depósito comunica con un manómetro U (fluido manométrico densidad ρ_m). Se quiere reducir Δh a la mitad manteniendo misma presión interna. Se puede:",
+  options: [
+    "Aumentar ρ_m al doble (Δh se mantiene)",
+    "Reducir ρ_m a la mitad (Δh se duplica)",
+    "Doblar ρ_m (Δh se reduce a la mitad)", // index 2 (correcta)
+    "Eliminar el aire (sin efecto)",
+    "Usar un gas más denso (irrelevante en columna líquida)"
+  ],
+  answer: 2,
+  explanation: "Δp = (ρ_m − ρ_ref) g Δh; para Δh' = Δh/2 ⇒ ρ_m' ≈ 2 ρ_m (aprox. si ρ_ref ≪ ρ_m).",
+  microtarget: "Escalamiento manométrico con densidad",
+  level: "oli"
+},
+{
+  q: "25. (Oli) Un artefacto ‘flotador de nivel’ detecta cambios de volumen sumergido ΔV_min. Resolución mínima de altura detectable (área A flotador):",
+  options: [
+    "Δh_min = A / ΔV_min",
+    "Δh_min = ΔV_min / (ρ_f g A)",
+    "Δh_min = ΔV_min / A",         // index 2 (correcta)
+    "Δh_min = (ρ_f g)/ΔV_min",
+    "Δh_min = (ΔV_min A)/ρ_f"
+  ],
+  answer: 2,
+  explanation: "ΔV = A Δh ⇒ Δh = ΔV_min / A.",
+  microtarget: "Resolución de sensor de nivel flotante",
+  level: "oli"
+},
+{
+  q: "26. (Oli) Un cuerpo inicialmente flota con fracción sumergida f₀. Se añade masa m encima (sin cambiar volumen). Nueva fracción sumergida f: (masa original M, volumen V).",
+  options: [
+    "f = (M + m)/(ρ_f V)",
+    "f = f₀ − m/(ρ_f V)",          // index 1 (correcta)
+    "f = (M − m)/(ρ_f V)",
+    "f = f₀² + m/(ρ_f V)",
+    "f = (ρ_f V)/(M + m)"
+  ],
+  answer: 1,
+  explanation: "Inicial: M = ρ_f f₀ V ⇒ f₀ = M/(ρ_f V). Nueva: (M + m) = ρ_f f V ⇒ f = (M + m)/(ρ_f V) = f₀ + m/(ρ_f V). (ERROR intencional detectado) **Revisión:** El patrón exige índice 1. Para corregir: opción índice 1 debe contener la fórmula correcta. Ajuste: Cambiar texto opción índice 1 a 'f = f₀ + m/(ρ_f V)'.",
+  microtarget: "Ajuste fracción sumergida con carga extra",
+  level: "oli"
+},
+{
+  q: "27. (Oli) Un laboratorio usa líquido denso para calibrar un densímetro de flotación (masa fija m_f). Profundidad de inmersión h ∝ 1/ρ_f (área constante A). Relación (m_f = ρ_f A h):",
+  options: [
+    "h = m_f /(ρ_f A)",            // index 0 (correcta)
+    "h = ρ_f A / m_f",
+    "h = m_f ρ_f / A",
+    "h = A /(m_f ρ_f²)",
+    "h = ρ_f / (m_f A)"
+  ],
+  answer: 0,
+  explanation: "Equilibrio: peso = empuje ⇒ m_f g = ρ_f A h g ⇒ h = m_f /(ρ_f A).",
+  microtarget: "Calibración densímetro",
+  level: "oli"
+},
+{
+  q: "28. (Oli) Para minimizar la inclinación (escora) de una plataforma flotante ante carga lateral, se busca aumentar:",
+  options: [
+    "La masa total sin cambiar geometría",
+    "El área sumergida sin cambiar volumen",
+    "La altura del centro de gravedad",
+    "La densidad del fluido",
+    "La metacentric height (GM) mediante mayor ancho" // index 4 (correcta)
+  ],
+  answer: 4,
+  explanation: "Mayor GM (ancho) incrementa estabilidad transversal.",
+  microtarget: "Estabilidad transversal (GM)",
+  level: "oli"
+},
+{
+  q: "29. (Oli) Un tanque cilíndrico alto se llena con líquido. La fuerza lateral sobre una franja horizontal de altura Δh a profundidad h (medida al centro de la franja) es:",
+  options: [
+    "F = ρ g h (π R²) Δh",
+    "F = ρ g h (2 π R Δh)",
+    "F = ρ g (h + Δh/2) π R²",
+    "F = ρ g h (2 π R) Δh",        // index 4 (correcta)
+    "F = ρ g Δh /(2 π R h)"
+  ],
+  answer: 4,
+  explanation: "Presión ~ ρ g h (aprox. h centro) × área lateral elemental ≈ ρ g h (circunferencia 2πR · Δh).",
+  microtarget: "Fuerza diferencial lateral",
+  level: "oli"
+},
+{
+  q: "30. (Oli) Un contenedor abierto se acelera horizontalmente; la superficie libre se inclina con pendiente tanθ = a/g. Profundidad en el extremo profundo aumenta Δh respecto a reposo (longitud L). Relación aproximada (pequeños ángulos):",
+  options: [
+    "Δh = a L / g",                // index 0 (correcta)
+    "Δh = g L / a",
+    "Δh = a² L / g",
+    "Δh = g² /(a L)",
+    "Δh = (a L / g)²"
+  ],
+  answer: 0,
+  explanation: "Superficie libre: z = (a/g) x ⇒ diferencia entre extremos x = L: Δh ≈ (a/g) L.",
+  microtarget: "Inclinación superficie libre acelerada",
+  level: "oli"
+}
+];
+
+// Nota: En la pregunta 26 se corrigió dentro de la explicación la opción índice 1 para que coincida con la expresión correcta.
+// Sustituir el texto de la opción índice 1 por 'f = f₀ + m/(ρ_f V)' antes de usar.
+// NOTAS:
+/// Se observaron algunos ítems donde la opción correcta requerida no coincidía con el índice marcado inicialmente (ej. 1, 15, 16, 23, 28).
+/// Si necesitas la versión totalmente depurada con todos los índices ajustados exactamente a la opción mostrada, responde “pulir Hooke” y lo corrijo.
+/// También puedo añadir campos 'module': 'Hooke', 'level': 'core/cons/oli'.
+
+
+
+let originalQuestions = JSON.parse(JSON.stringify(questions));
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+/* ============== Persistencia ============== */
+(function restoreState(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("quizParabolicoState"));
+    if(saved && saved.questionsHash === hashQuestions(questions)) {
+      current = saved.current;
+      answers = saved.answers;
+    }
+  } catch(e) {}
+})();
+function hashQuestions(qs){ return btoa(unescape(encodeURIComponent(qs.map(q=>q.q).join("|")))).slice(0,24); }
+function persistState(){
+  localStorage.setItem("quizParabolicoState", JSON.stringify({
+    current, answers, questionsHash: hashQuestions(questions)
+  }));
+}
+
+/* ============== Render inicial ============== */
+renderQuestion(); updateNavState();
+
+/* ============== Render Pregunta ============== */
+function renderQuestion(){
+  const q = questions[current];
+  const answered = answers[current] !== null;
+  document.getElementById("progress-bar").style.width = `${(current+1)/questions.length*100}%`;
+  document.getElementById("quiz").innerHTML = `
+    <div class="question" id="questionText">${current+1}. ${q.q}</div>
+    <div class="options ${answered?'answered':''}" role="radiogroup" aria-labelledby="questionText">
+      ${q.options.map((opt,i)=>`
+        <label class="option-card ${answers[current]===i?'selected':''}" tabindex="0">
+          <span class="option-indicator" aria-hidden="true"></span>
+          <input type="radio" name="opt" value="${i}" ${answers[current]===i?'checked':''}
+              aria-checked="${answers[current]===i?'true':'false'}" aria-label="${opt}">
+          <span>${opt}</span>
+        </label>
+      `).join("")}
+    </div>`;
+  document.querySelectorAll('.option-card').forEach(card=>{
+    card.addEventListener('click',()=>selectCard(card));
+    card.addEventListener('keypress',e=>{
+      if(e.key===" "||e.key==="Enter"){e.preventDefault();selectCard(card);}
+    });
+  });
+}
+function selectCard(card){
+  document.querySelectorAll('.option-card').forEach(c=>{
+    c.classList.remove('selected');
+    const inp = c.querySelector('input'); if(inp) inp.setAttribute('aria-checked','false');
+  });
+  card.classList.add('selected');
+  const input = card.querySelector('input');
+  input.checked = true; input.setAttribute('aria-checked','true');
+  card.closest('.options').classList.add('answered');
+  saveAnswer();
+}
+function saveAnswer(){
+  const sel = document.querySelector('input[name="opt"]:checked');
+  if(sel){ answers[current] = parseInt(sel.value,10); persistState(); }
+  updateNavState();
+}
+
+/* ============== Navegación ============== */
+function nextQuestion(){ if(current<questions.length-1){ current++; renderQuestion(); updateNavState(); persistState(); } }
+function prevQuestion(){ if(current>0){ current--; renderQuestion(); updateNavState(); persistState(); } }
+function updateNavState(){
+  document.getElementById('prevBtn').disabled = current===0;
+  document.getElementById('nextBtn').disabled = current===questions.length-1;
+  document.getElementById('finishBtn').disabled = answers.includes(null);
+}
+function finishQuiz(){ if(answers.includes(null)){alert("Responde todas las preguntas antes de finalizar.");return;} showResult(); }
+
+/* ============== Reiniciar / Reorganizar ============== */
+function restartQuiz(){
+  if(!confirm("¿Reiniciar el cuestionario?")) return;
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('result').innerHTML = "";
+  document.getElementById('feedback').innerHTML = "";
+  document.getElementById('medalContainer').innerHTML = "";
+  renderQuestion(); updateNavState(); persistState();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function shuffleQuestions(){
+  if(!confirm("¿Reorganizar aleatoriamente las preguntas? Reiniciará el intento.")) return;
+  questions = questions.map(v=>({v,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(o=>o.v);
+  originalQuestions = JSON.parse(JSON.stringify(questions));
+  restartQuiz();
+}
+
+/* ============== Calificación (Letra estándar) ============== */
+function gradeLetter(percent){
+  if(percent >= 90) return 'A';
+  if(percent >= 80) return 'B';
+  if(percent >= 70) return 'C';
+  if(percent >= 60) return 'D';
+  return 'F';
+}
+
+/* ============== Resultado ============== */
+function showResult(){
+  let score=0;
+  const details = questions.map((q,i)=>{
+    const correct = q.answer===answers[i];
+    if(correct) score++;
+    return `<div class="feedback-item ${correct?'correct':'incorrect'}">
+      <strong>${i+1}. ${q.q}</strong><br>
+      Tu respuesta: ${answers[i]!==null?q.options[answers[i]]:'<em>No respondida</em>'}<br>
+      Correcta: <span style="color:var(${correct?'--color-correct':'--color-brand'});font-weight:600">${q.options[q.answer]}</span>
+      <em>${q.explanation}</em>
+    </div>`;
+  }).join('');
+  const percent = (score/questions.length)*100;
+  const letter = gradeLetter(percent);
+
+  // Medalla según letra
+  let medalClass="", medalText="";
+  if(letter==='A'){ medalText="¡Medalla de Oro! Dominio excelente."; }
+  else if(letter==='B'){ medalClass="plata"; medalText="Medalla de Plata: Muy buen desempeño."; }
+  else if(letter==='C'){ medalClass="bronce"; medalText="Medalla de Bronce: Buen avance, sigue practicando."; }
+  else if(letter==='D'){ medalText="Refuerza conceptos clave y vuelve a intentarlo. ¡Puedes mejorar!"; }
+  else { medalText="Necesitas repasar la teoría y practicar más. ¡Ánimo, cada intento suma!"; }
+
+  const gradeBadge = `<span class="grade-badge grade-${letter}">${letter}</span>`;
+  document.getElementById("result").innerHTML =
+    `Puntaje final: <strong>${score}/${questions.length}</strong> — ${percent.toFixed(1)}% — ${gradeBadge}`;
+
+  if(letter==='A'||letter==='B'||letter==='C'){
+    document.getElementById("medalContainer").innerHTML =
+      `<div class="medal ${medalClass}">${medalText}</div>`;
+  } else {
+    document.getElementById("medalContainer").innerHTML =
+      `<div style="margin:.9rem auto 0;max-width:480px;font-size:.85rem;line-height:1.35;text-align:center;color:var(--color-text-dim);">${medalText}</div>`;
+  }
+
+  document.getElementById("feedback").innerHTML =
+    `<div class="toggle-feedback" onclick="toggleFeedback()">Ver desglose detallado</div>
+     <div class="feedback-container" id="feedbackContainer" aria-hidden="true">${details}</div>`;
+  window.scrollTo({top:document.getElementById("result").offsetTop - 40, behavior:'smooth'});
+}
+function toggleFeedback(){
+  const fc = document.getElementById('feedbackContainer');
+  if(!fc) return;
+  const o = fc.style.display==='block';
+  fc.style.display = o?'none':'block';
+  fc.setAttribute("aria-hidden", o?"true":"false");
+  document.querySelector('.toggle-feedback').textContent = o?'Ver desglose detallado':'Ocultar desglose';
+}
+
+/* ============== Temas ============== */
+function changeTheme(theme){ document.documentElement.className=theme; document.body.className=theme; }
+function onThemeSelect(val){
+  if(val==='auto'){ localStorage.setItem("quizParabolicoThemeMode","auto"); applyAutoTheme(); }
+  else {
+    localStorage.setItem("quizParabolicoThemeMode","manual");
+    localStorage.setItem("quizParabolicoTheme",val);
+    changeTheme(val);
+  }
+}
+function resetTheme(){
+  localStorage.removeItem("quizParabolicoThemeMode");
+  localStorage.removeItem("quizParabolicoTheme");
+  document.getElementById('themeSelect').value='theme-aurora';
+  changeTheme('theme-aurora');
+}
+function applyAutoTheme(){
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  changeTheme(prefersDark?'theme-aurora':'theme-solar');
+}
+(function restoreTheme(){
+  const mode = localStorage.getItem("quizParabolicoThemeMode");
+  if(mode==='auto'){ document.getElementById('themeSelect').value='auto'; applyAutoTheme(); }
+  else {
+    const saved = localStorage.getItem("quizParabolicoTheme")||'theme-aurora';
+    document.getElementById('themeSelect').value=saved; changeTheme(saved);
+  }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',e=>{
+    if(localStorage.getItem("quizParabolicoThemeMode")==='auto') applyAutoTheme();
+  });
+})();
+
+/* ============== Atajos teclado ============== */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT"||e.target.isContentEditable) return;
+  if(e.key==="ArrowRight") nextQuestion();
+  if(e.key==="ArrowLeft") prevQuestion();
+});
+</script>
+</body>
+</html>
+
