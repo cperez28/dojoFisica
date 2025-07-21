@@ -265,7 +265,7 @@ let questions = [
     level: "core"
   },
   {
-    q: "4. (Core) Una carga puntual +Q en el centro de esfera: |E| es constante en la superficie porque:",
+    q: "4. (Core) Una carga puntual +Q en el centro de una esfera: |E| es constante en la superficie porque:",
     options: [
       "La carga se distribuye uniformemente",
       "El flujo es cero",
@@ -288,7 +288,7 @@ let questions = [
       "E = (1/4π ε₀) Q / r²"
     ],
     answer: 4,
-    explanation: "∮ E·dA = E 4π r² = Q/ε₀ ⇒ E = (1/4π ε₀) Q/r².",
+    explanation: "∮ E·dA = E·4πr² = Q/ε₀ ⇒ E = (1/4π ε₀) Q/r².",
     microtarget: "Aplicación Gauss a carga puntual",
     level: "core"
   },
@@ -316,7 +316,7 @@ let questions = [
       "Q_enc = ρ (R³ − r³)"
     ],
     answer: 1,
-    explanation: "Volumen de esfera r: (4/3)π r³ multiplicado por ρ.",
+    explanation: "Volumen de esfera de radio r: (4/3)π r³; multiplicar por ρ da Q_enc.",
     microtarget: "Cálculo Q_enc para distribución uniforme",
     level: "core"
   },
@@ -330,21 +330,21 @@ let questions = [
       "E ∝ 1/r²"
     ],
     answer: 2,
-    explanation: "E = ρ r /(3 ε₀) (magnitud) ⇒ proporcional a r.",
-    microtarget: "Dependencia lineal interior esfera uniforme",
+    explanation: "E = (ρ r)/(3 ε₀) ⇒ crece linealmente con r.",
+    microtarget: "Dependencia lineal interior de esfera uniforme",
     level: "core"
   },
   {
-    q: "9. (Core) E=0 en interior de conductor en equilibrio porque:",
+    q: "9. (Core) E=0 en interior de un conductor en equilibrio porque:",
     options: [
-      "ε₀=0 dentro",
+      "ε₀ = 0 dentro",
       "Las cargas libres se redistribuyen hasta anular el campo interno",
       "El material absorbe líneas de campo",
       "La carga neta siempre es cero",
       "Gauss no se aplica a conductores"
     ],
     answer: 1,
-    explanation: "Cargas móviles migran hasta que el campo interno desaparece.",
+    explanation: "Las cargas móviles se mueven hasta cancelar cualquier campo interno.",
     microtarget: "Justificación de blindaje interno conductor",
     level: "core"
   },
@@ -358,8 +358,296 @@ let questions = [
       "E = σ/(4ε₀)"
     ],
     answer: 1,
-    explanation: "Pillbox: flujo 2EA = σA/ε₀ ⇒ E=σ/(2ε₀).",
-    microtarget: "Camp
+    explanation: "Pillbox: flujo = σA/ε₀ = 2E A ⇒ E = σ/(2ε₀).",
+    microtarget: "Campo de lámina infinita",
+    level: "core"
+  },
+
+  /* -------- CONS (11–20) -------- */
+  {
+    q: "11. (Cons) Esfera conductora de radio R con carga Q. ¿Cómo es el campo en el interior (r<R) y exterior (r>R)?",
+    options: [
+      "Dentro ∝1/r, fuera ∝1/r²",
+      "Dentro 0, fuera ∝1/r²",
+      "Dentro 0, fuera ∝r",
+      "Dentro ∝r, fuera ∝1/r²",
+      "Dentro 0, fuera 0"
+    ],
+    answer: 1,
+    explanation: "Conductor: E=0 dentro; fuera actúa como carga puntual: ∝1/r².",
+    microtarget: "Campo de esfera conductora",
+    level: "cons"
+  },
+  {
+    q: "12. (Cons) Cáscara esférica conductora de radio R con carga Q. ¿Campo en el interior de la cáscara (r<R)?",
+    options: [
+      "Constante ≠0",
+      "∝1/r",
+      "Cero",
+      "∝r",
+      "Depende del material"
+    ],
+    answer: 2,
+    explanation: "Dentro de un cascarón conductor sin carga interna, E=0.",
+    microtarget: "Blindaje en cascarón conductor",
+    level: "cons"
+  },
+  {
+    q: "13. (Cons) Cilindro conductor hueco con carga Q. ¿Campo dentro de la cavidad (r<a)?",
+    options: [
+      "E = ρ r/(2ε₀)",
+      "E = Q/(2π ε₀ r)",
+      "E ∝ r²",
+      "E = 0",
+      "E ∝1/r²"
+    ],
+    answer: 3,
+    explanation: "Dentro de la cavidad de un conductor cargado, E=0.",
+    microtarget: "Blindaje en cilindro conductor",
+    level: "cons"
+  },
+  {
+    q: "14. (Cons) Hilo largo de densidad lineal λ: campo a distancia r:",
+    options: [
+      "E = λ/(4π ε₀ r²)",
+      "E = λ/(2π ε₀ r)",
+      "E = λ/(ε₀ r)",
+      "E = 2π ε₀ λ r",
+      "E = λ r/(2π ε₀)"
+    ],
+    answer: 1,
+    explanation: "Gauss cilíndrica: E·2πrL = λL/ε₀ ⇒ E = λ/(2π ε₀ r).",
+    microtarget: "Campo de hilo infinito",
+    level: "cons"
+  },
+  {
+    q: "15. (Cons) Dos láminas paralelas infinitas con σ y −σ: campo entre ellas:",
+    options: [
+      "Cero",
+      "σ/(2ε₀)",
+      "σ/ε₀",
+      "2σ/ε₀",
+      "Variable lineal"
+    ],
+    answer: 2,
+    explanation: "Cada lámina aporta σ/(2ε₀); entre ellas suman σ/ε₀.",
+    microtarget: "Superposición de láminas",
+    level: "cons"
+  },
+  {
+    q: "16. (Cons) Resultado E = σ/(2ε₀) es exacto sólo para lámina infinita porque:",
+    options: [
+      "ε₀ cambia cerca de bordes",
+      "Gauss no aplica a superficies finitas",
+      "Bordes finitos rompen la simetría planar perfecta",
+      "Q_enc deja de existir",
+      "El campo se vuelve radial"
+    ],
+    answer: 2,
+    explanation: "Los bordes finitos introducen variaciones de campo fuera de la zona central.",
+    microtarget: "Limitaciones por bordes finitos",
+    level: "cons"
+  },
+  {
+    q: "17. (Cons) Medido E(r) = k'/r² radial, la carga encerrada Q_enc es:",
+    options: [
+      "Q = ε₀ 2π r E",
+      "Q = ε₀ E/r²",
+      "Q = 0",
+      "Q = ε₀ 4π r² E",
+      "Q = ε₀ E"
+    ],
+    answer: 3,
+    explanation: "Flujo = E·4πr² = Q/ε₀ ⇒ Q = ε₀·4πr²·E.",
+    microtarget: "Inversión de Gauss para Q_enc",
+    level: "cons"
+  },
+  {
+    q: "18. (Cons) Salto de la componente normal de E al pasar de conductor a vacío con densidad superficial σ:",
+    options: [
+      "E_out = E_in",
+      "E_out + E_in = σ/ε₀",
+      "Depende del radio",
+      "E_out − E_in = σ/ε₀",
+      "E_out = σ/(2ε₀)"
+    ],
+    answer: 4,
+    explanation: "Pillbox en esquema conductor-vacío: E_out − 0 = σ/ε₀ (reubicado a índice 4).",
+    microtarget: "Condición de frontera conductor-vacío",
+    level: "cons"
+  },
+  {
+    q: "19. (Cons) Dado E justo fuera de esfera conductora cargada, la densidad superficial σ es:",
+    options: [
+      "σ = E/ε₀",
+      "σ = ε₀ E",
+      "σ = ε₀ E/2",
+      "σ = 2 ε₀ E",
+      "σ = ε₀ / E"
+    ],
+    answer: 0,
+    explanation: "E_normal = σ/ε₀ ⇒ σ = ε₀ E (reubicado a índice 0).",
+    microtarget: "Relación σ vs E en conductor",
+    level: "cons"
+  },
+  {
+    q: "20. (Cons) Cilindro conductor hueco con carga neta Q. ¿Campo en la región interior hueca (sin carga interna)?",
+    options: [
+      "∝1/r",
+      "0",
+      "Constante",
+      "∝r",
+      "Igual al exterior"
+    ],
+    answer: 2,
+    explanation: "Dentro de un conductor hueco, E=0; (reubicado a índice 2).",
+    microtarget: "Blindaje monocapa conductor",
+    level: "cons"
+  },
+
+  /* -------- OLI (21–30) -------- */
+  {
+    q: "21. (Oli) Dos capas esféricas concéntricas con cargas Q₁ en R₁ y Q₂ en R₂>R₁. ¿Cómo varía E(r)?",
+    options: [
+      "r<R₁: E∝Q₁/r²; R₁<r<R₂: 0; r>R₂: E∝Q₂/r²",
+      "r<R₁: 0; R₁<r<R₂: E∝Q₂/r²; r>R₂: E∝(Q₁+Q₂)/r²",
+      "Siempre E∝1/r² con Q_total",
+      "r<R₁: 0; R₁<r<R₂: E∝Q₁/r²; r>R₂: E∝(Q₁+Q₂)/r²",
+      "Campo constante en todas las regiones"
+    ],
+    answer: 3,
+    explanation: "En cada región, Q_enc es acumulada: 0, Q₁, Q₁+Q₂ respectivamente.",
+    microtarget: "Análisis multicapa radial",
+    level: "oli"
+  },
+  {
+    q: "22. (Oli) E(r) ∝ r para r<R₀ y ∝ 1/r² para r>R₀. ¿Qué distribución corresponde?",
+    options: [
+      "Cascarón conductor",
+      "Línea infinita",
+      "Lámina infinita",
+      "Dipolo puntual",
+      "Esfera maciza uniforme"
+    ],
+    answer: 4,
+    explanation: "Dentro, E∝r indica densidad volumétrica uniforme; afuera, se comporta como carga puntual.",
+    microtarget: "Diagnóstico de distribución volumétrica",
+    level: "oli"
+  },
+  {
+    q: "23. (Oli) Cavidad esférica (no conductora) desplazada dentro de esfera maciza uniforme. ¿Campo en la cavidad?",
+    options: [
+      "Cero",
+      "Uniforme",
+      "∝1/r² desde su centro",
+      "Radial hacia centro original",
+      "Indefinido"
+    ],
+    answer: 1,
+    explanation: "Superposición de dos esferas: campo resultante es uniforme dentro de la cavidad.",
+    microtarget: "Campo en cavidad desplazada",
+    level: "oli"
+  },
+  {
+    q: "24. (Oli) Cavidad en conductor cargado sin carga interna. ¿Campo dentro de la cavidad?",
+    options: [
+      "Uniforme",
+      "Oscila",
+      "0",
+      "∝1/r",
+      "Igual al exterior"
+    ],
+    answer: 2,
+    explanation: "Blindaje conductor: E=0 dentro de la cavidad.",
+    microtarget: "Blindaje en cavidad conductora",
+    level: "oli"
+  },
+  {
+    q: "25. (Oli) Configuración coaxial: cilindro sólido interior (radio a) con densidad λ_int y cilindro conductor exterior neutro (radio b). ¿E(r) en a<r<b?",
+    options: [
+      "E ∝ r",
+      "E = 0",
+      "E ∝ 1/r²",
+      "E ∝ 1/r",
+      "E = constante"
+    ],
+    answer: 3,
+    explanation: "En la región intermedia, Q_enc = λ_int·L ⇒ E = λ_int/(2π ε₀ r).",
+    microtarget: "Campo de cable coaxial",
+    level: "oli"
+  },
+  {
+    q: "26. (Oli) Pillbox en lámina inclinada localmente plana: dirección de E local es:",
+    options: [
+      "Paralela a la lámina",
+      "Circular",
+      "Depende del punto",
+      "Arbitraria",
+      "Perpendicular a la lámina"
+    ],
+    answer: 4,
+    explanation: "Simetría planar local → E es normal a la superficie.",
+    microtarget: "Selección de Gauss para láminas",
+    level: "oli"
+  },
+  {
+    q: "27. (Oli) Conociendo E(r) radial, la densidad ρ(r) se obtiene por:",
+    options: [
+      "ρ(r) = ε₀ E(r)",
+      "ρ(r) = dE/dr",
+      "ρ(r) = (1/4π r²) d/dr [ε₀ 4π r² E(r)]",
+      "ρ(r) = E(r)/ε₀",
+      "ρ(r) = ε₀ r² E(r)"
+    ],
+    answer: 2,
+    explanation: "Forma diferencial de Gauss en coordenadas esféricas: ρ = (ε₀/ r²)d(r²E)/dr.",
+    microtarget: "Inversión diferencial de Gauss",
+    level: "oli"
+  },
+  {
+    q: "28. (Oli) Cubo con carga puntual en un vértice: ¿Por qué Gauss no simplifica el cálculo de flujo?",
+    options: [
+      "La carga no está en el centro de simetría de ninguna cara",
+      "No se puede definir dA",
+      "El flujo siempre es cero",
+      "La carga sale del cubo",
+      "E se vuelve tangencial"
+    ],
+    answer: 2,
+    explanation: "Sin simetría, E no es constante ni normal en las caras del cubo.",
+    microtarget: "Criterio de elección de superficie Gauss",
+    level: "oli"
+  },
+  {
+    q: "29. (Oli) Flujo neto de un dipolo ideal (+q y −q) a través de cualquier superficie cerrada:",
+    options: [
+      "Q_dip/ε₀",
+      "Infinito",
+      "Depende de orientación",
+      "Cero",
+      "Negativo constante"
+    ],
+    answer: 3,
+    explanation: "Carga neta = 0 ⇒ flujo neto = 0.",
+    microtarget: "Flujo y carga neta nula",
+    level: "oli"
+  },
+  {
+    q: "30. (Oli) Esfera conductora con cavidad excéntrica y carga +q en la cavidad. ¿Distribución de carga inducida?",
+    options: [
+      "Carga inducida −q en la pared interna y +(Q_original+q) en la superficie externa",
+      "−q repartido afuera y +q adentro",
+      "Uniforme en toda la superficie interna y externa",
+      "Cero en la superficie interna",
+      "+q en un solo punto interior"
+    ],
+    answer: 4,
+    explanation: "Se induce −q en la pared interna para anular campo en el conductor; el exterior ajusta la carga total.",
+    microtarget: "Inducción en cavidad excéntrica",
+    level: "oli"
+  }
+];
+
 // NOTAS:
 /// Se observaron algunos ítems donde la opción correcta requerida no coincidía con el índice marcado inicialmente (ej. 1, 15, 16, 23, 28).
 /// Si necesitas la versión totalmente depurada con todos los índices ajustados exactamente a la opción mostrada, responde “pulir Hooke” y lo corrijo.

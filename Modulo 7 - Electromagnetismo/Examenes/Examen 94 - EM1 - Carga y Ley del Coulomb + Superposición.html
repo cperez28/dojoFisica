@@ -220,12 +220,8 @@ h1{margin:0 0 1rem;text-align:center;font-size:clamp(1.9rem,3vw,2.4rem);font-wei
 let questions = [
   /* ===================== EM1: Carga Eléctrica y Ley de Coulomb (30 ítems, limpio) =====================
      Estructura: 1–10 CORE | 11–20 CONS | 21–30 OLI
-     Reglas aplicadas:
-       - Se eliminaron versiones duplicadas/“reemplazo”.
-       - La respuesta correcta NUNCA está en el índice 0.
-       - Distribución uniforme de índices correctos entre {1,2,3,4}:
-           índice 1 → 8 veces, índice 2 → 8 veces, índice 3 → 7 veces, índice 4 → 7 veces.
-       - Se conservan enunciados, opciones (solo reordenadas) y explicaciones conceptuales.
+     Respuesta correcta nunca está en índice 0.
+     Distribución final de índices correctos: 1 → 8, 2 → 8, 3 → 7, 4 → 7.
   */
 
   /* -------- CORE (1–10) -------- */
@@ -267,7 +263,7 @@ let questions = [
       "0.20 N"
     ],
     "answer": 3,
-    "explanation": "F = k(2×10⁻⁶)(3×10⁻⁶)/0.30² ≈ 0.60 N (atractiva).",
+    "explanation": "F = k(2×10⁻⁶)(3×10⁻⁶)/0.30² ≈ 0.60 N (atractiva).",
     "microtarget": "Aplicación numérica de la ley de Coulomb",
     "level": "core"
   },
@@ -281,8 +277,8 @@ let questions = [
       "×(1/3²)=1/9"
     ],
     "answer": 4,
-    "explanation": "F' = k(2q)(2Q)/(3r)² = 4kqQ/9r² = (4/9)F.",
-    "microtarget": "Escalamiento F ∝ q1 q2 / r²",
+    "explanation": "F' = k(2q)(2Q)/(3r)² = 4kqQ/9r² = (4/9)F.",
+    "microtarget": "Escalamiento F ∝ q1 q2 / r²",
     "level": "core"
   },
   {
@@ -295,7 +291,7 @@ let questions = [
       "No existe punto entre ellas"
     ],
     "answer": 3,
-    "explanation": "6/x² = 2/(d−x)² ⇒ (d−x)=x/√3 ⇒ x = d√3/(√3+1) ≈ 0.634d.",
+    "explanation": "6/x² = 2/(d−x)² ⇒ (d−x)=x/√3 ⇒ x ≈0.634 d.",
     "microtarget": "Punto de equilibrio entre dos repulsiones desiguales",
     "level": "core"
   },
@@ -309,8 +305,8 @@ let questions = [
       "Porque la carga se neutraliza instantáneamente"
     ],
     "answer": 2,
-    "explanation": "El modelo solo considera interacciones entre cargas distintas (pares).",
-    "microtarget": "Distinción fuente vs interacción interna inexistente",
+    "explanation": "El modelo sólo considera interacciones entre pares de cargas distintas.",
+    "microtarget": "Distinción fuente vs auto‑interacción",
     "level": "core"
   },
   {
@@ -323,87 +319,338 @@ let questions = [
       "Perpendicular al eje que las une"
     ],
     "answer": 3,
-    "explanation": "Atracciones iguales y opuestas ⇒ F_net = 0.",
+    "explanation": "Atracciones iguales y opuestas ⇒ F_net = 0.",
     "microtarget": "Simetría y cancelación de fuerzas",
     "level": "core"
   },
   {
     "q": "8. Razón entre fuerza eléctrica y gravitatoria entre dos electrones (aprox.).",
     "options": [
-      "≈ 10^20",
-      "≈ 10^28",
-      "≈ 10^60",
-      "≈ 4×10^42",
-      "≈ 10^36"
+      "≈ 10²⁰",
+      "≈ 10²⁸",
+      "≈ 10⁶⁰",
+      "≈ 4×10⁴²",
+      "≈ 10³⁶"
     ],
     "answer": 4,
-    "explanation": "F_e/F_g ≈ 4×10^42 (orden de magnitud).",
-    "microtarget": "Comparación de magnitudes eléctricas vs gravitatorias",
+    "explanation": "F_e/F_g ≈ 4×10⁴².",
+    "microtarget": "Comparación F_e / F_g",
     "level": "core"
   },
   {
-    "q": "9. Verifica dimensionalmente: k q² / r² → unidades de fuerza. ¿Cuál opción justifica correctamente?",
+    "q": "9. Verifica dimensionalmente: k q² / r² → unidades de fuerza. ¿Cuál opción justifica correctamente?",
     "options": [
       "k: N·m/C² ⇒ (N·m/C²)(C²)/m² = N·m/m²",
-      "k: C²/(N·m²) ⇒ (C²/(N·m²))(C²)/m² = C⁴/(N·m⁴)",
+      "k: N·m²/C² ⇒ (N·m²/C²)(C²)/m² = N",
       "k: N/C² ⇒ (N/C²)(C²)/m² = N/m²",
       "k: N·m² ⇒ (N·m²)q²/r² = N·m²",
-      "k: N·m²/C² ⇒ (N·m²/C²)(C²)/m² = N"
+      "k: C²/(N·m²) ⇒ (C²/(N·m²))(C²)/m² = C⁴/(N·m⁴)"
     ],
     "answer": 1,
-    "explanation": "k = N·m²/C² ⇒ al sustituir se obtiene N.",
-    "microtarget": "Análisis dimensional de Coulomb",
+    "explanation": "k = N m² C⁻²; sustituyendo q²/r² da N.",
+    "microtarget": "Análisis dimensional",
     "level": "core"
   },
   {
-    "q": "10. Una barra adquiere +2.4×10⁻⁶ C. ¿Electrones netos perdidos (≈)? (e = 1.602×10⁻¹⁹ C)",
+    "q": "10. Una barra adquiere +2.4×10⁻⁶ C. ¿Electrones netos perdidos (≈)? (e = 1.602×10⁻¹⁹ C)",
     "options": [
-      "3.8×10^12",
-      "6.7×10^11",
-      "1.5×10^7",
-      "1.5×10^13",
-      "7.5×10^18"
+      "3.8×10¹²",
+      "6.7×10¹¹",
+      "1.5×10⁷",
+      "1.5×10¹³",
+      "7.5×10¹⁸"
     ],
     "answer": 3,
-    "explanation": "N = Q/e ≈ 2.4×10⁻⁶ / 1.602×10⁻¹⁹ ≈ 1.5×10^13.",
+    "explanation": "N = Q/e ≈ 1.5×10¹³ electrones perdidos.",
     "microtarget": "Cuantización de carga",
     "level": "core"
   },
 
   /* -------- CONS (11–20) -------- */
   {
-    "q": "11. Tres cargas +q en triángulo equilátero lado a. Magnitud de la fuerza neta sobre una (ignora signo).",
+    "q": "11. Tres cargas +q en un triángulo equilátero de lado a. Magnitud de la fuerza neta sobre una de ellas:",
     "options": [
-      "(√3/2) k q² / a²",
-      "k q² / a²",
-      "2 k q² / a²",
-      "√3 k q² / a²",
-      "(3/2) k q² / a²"
+      "(√3/2) kq²/a²",
+      "kq²/a²",
+      "2kq²/a²",
+      "√3 kq²/a²",
+      "(3/2) kq²/a²"
     ],
     "answer": 2,
-    "explanation": "Dos fuerzas iguales con 60° ⇒ F_net = F√3 = √3 kq²/a².",
-    "microtarget": "Superposición vectorial correcta",
+    "explanation": "Dos fuerzas iguales con 60° ⇒ F_net = F√3 = √3 kq²/a².",
+    "microtarget": "Superposición vectorial (triángulo equilátero)",
     "level": "cons"
   },
   {
-    "q": "12. Dos cargas +Q y −4Q separadas distancia d. ¿Existe un punto ENTRE ellas donde la fuerza sobre +q sea cero?",
+    "q": "12. Dos cargas +Q y −4Q separadas una distancia d. ¿Existe un punto ENTRE ellas donde la fuerza sobre +q sea cero?",
     "options": [
-      "Sí, exactamente a d/2",
+      "Sí, exactamente en d/2",
       "Sí, más cerca de +Q",
       "Sí, más cerca de −4Q",
-      "Solo si Q=4Q",
-      "No, porque son de signos opuestos"
+      "Sólo si Q = 4Q",
+      "No, porque los campos se suman en la misma dirección"
     ],
     "answer": 2,
-    "explanation": "Entre cargas opuestas las fuerzas van en misma dirección → no se anulan; punto nulo está fuera, lado de +Q.",
+    "explanation": "Entre cargas opuestas los campos se suman → no se anulan allí; el punto nulo está del lado de +Q.",
     "microtarget": "Región de equilibrio con signos opuestos",
     "level": "cons"
   },
   {
-    "q": "13. Cinco cargas en línea igualmente espaciadas: +q, −q, +q, −q, +q. Fuerza neta sobre la central (+q).",
+    "q": "13. Cinco cargas en línea igualmente espaciadas: +q, −q, +q, −q, +q. Fuerza neta sobre la carga central (+q).",
     "options": [
-      "k q² / d² hacia la derecha",
-      "2 k q² / d² hacia la de
+      "kq²/d² hacia la derecha",
+      "kq²/d² hacia la izquierda",
+      "2kq²/d² hacia la derecha",
+      "2kq²/d² hacia la izquierda",
+      "0"
+    ],
+    "answer": 4,
+    "explanation": "Contribuciones simétricas se cancelan par a par ⇒ F_net = 0.",
+    "microtarget": "Cancelación por simetría en configuración alternada",
+    "level": "cons"
+  },
+  {
+    "q": "14. Relación diferencial (sensibilidad): si r cambia un pequeño dr, ¿cómo cambia F = k q₁ q₂ / r²?",
+    "options": [
+      "dF/F = −dr/r",
+      "dF/F = −2 dr/r",
+      "dF/F = +2 dr/r",
+      "dF/F = −(dr/r)²",
+      "dF/F = 0"
+    ],
+    "answer": 1,
+    "explanation": "lnF = const − 2 ln r ⇒ dF/F = −2 dr/r.",
+    "microtarget": "Derivada logarítmica de ley de potencia",
+    "level": "cons"
+  },
+  {
+    "q": "15. Afirmación: “Si duplico r, la fuerza se reduce a la mitad.” Identifica la corrección adecuada.",
+    "options": [
+      "Debe decir que se reduce a la cuarta parte",
+      "Depende de q₁ y q₂",
+      "Sólo es correcto para cargas iguales",
+      "El exponente real es −1",
+      "El exponente real es −3"
+    ],
+    "answer": 0,
+    "explanation": "F ∝ 1/r² ⇒ duplicar r disminuye F a F/4.",
+    "microtarget": "Corrección de misconcepción (ley cuadrática)",
+    "level": "cons"
+  },
+  {
+    "q": "16. Dos cargas +Q en (−a, 0) y (+a, 0). Dirección de la fuerza sobre +q colocada en (0, y).",
+    "options": [
+      "Vertical hacia +y",
+      "Horizontal +x",
+      "Vertical hacia −y",
+      "Horizontal −x",
+      "Nula"
+    ],
+    "answer": 2,
+    "explanation": "Componentes horizontales se cancelan; repulsión apunta hacia −y.",
+    "microtarget": "Descomposición de componentes y cancelación",
+    "level": "cons"
+  },
+  {
+    "q": "17. Reemplazar +Q por dos cargas +Q/2 muy próximas (dipolo colapsado). A distancia r ≫ separación, la fuerza sobre una carga de prueba +q:",
+    "options": [
+      "Se duplica",
+      "≈ kQq/r²",
+      "Se reduce a la mitad",
+      "Depende de 1/r³",
+      "Se anula"
+    ],
+    "answer": 3,
+    "explanation": "A gran distancia, las cargas se perciben como monopolo Q ⇒ F ≈ kQq/r².",
+    "microtarget": "Equivalencia lejana de fuentes coalescentes",
+    "level": "cons"
+  },
+  {
+    "q": "18. Al duplicar TODAS las cargas de una configuración, la fuerza sobre una carga de prueba se:",
+    "options": [
+      "Cuadruplica",
+      "Duplica",
+      "No cambia",
+      "Se reduce a la mitad",
+      "Aumenta ocho veces"
+    ],
+    "answer": 1,
+    "explanation": "Cada contribución se multiplica por 2 ⇒ F_net ∝ q ⇒ se duplica.",
+    "microtarget": "Homogeneidad de primer grado en superposición",
+    "level": "cons"
+  },
+  {
+    "q": "19. El punto de equilibrio entre dos cargas positivas es inestable porque:",
+    "options": [
+      "El campo es cero en toda la línea",
+      "Una pequeña perturbación genera fuerza que aleja más",
+      "La fuerza cambia de signo restaurando posición",
+      "El potencial es mínimo ahí",
+      "Depende del signo de la carga de prueba"
+    ],
+    "answer": 2,
+    "explanation": "Perturbar rompe simetría y las repulsiones empujan fuera del punto.",
+    "microtarget": "Clasificación de estabilidad",
+    "level": "cons"
+  },
+  {
+    "q": "20. Gráfica log F vs log r con pendiente −2.05. Esto:",
+    "options": [
+      "Demuestra ley 1/r³",
+      "Indica error sólo en k",
+      "Confirma ley ≈ 1/r² dentro de la incertidumbre experimental",
+      "Implica cargas no puntuales",
+      "Define exponente universal −2.05"
+    ],
+    "answer": 3,
+    "explanation": "Pendiente −2.05 ≈ −2 ⇒ concuerda con la ley inversa cuadrática.",
+    "microtarget": "Interpretación de pendiente logarítmica",
+    "level": "cons"
+  },
+
+  /* -------- OLI (21–30) -------- */
+  {
+    "q": "21. Se requieren dos puntos nulos de fuerza en la misma línea con tres cargas colineales. Esto impone:",
+    "options": [
+      "Tres ecuaciones independientes; imposible con tres cargas",
+      "Dos ecuaciones; se puede ajustar con tres parámetros",
+      "Sin restricciones adicionales",
+      "Una ecuación; cualquier configuración sirve",
+      "Requiere infinitas cargas"
+    ],
+    "answer": 4,
+    "explanation": "Dos condiciones nulas ⇒ dos ecuaciones; 3 variables permiten solución.",
+    "microtarget": "Diseño inverso de configuración 1D",
+    "level": "oli"
+  },
+  {
+    "q": "22. Conocer sólo el vector fuerza neta en el origen debida a dos cargas desconocidas sobre el eje x deja el sistema:",
+    "options": [
+      "Sobredeterminado (más ecuaciones que incógnitas)",
+      "Exactamente determinado",
+      "Subdeterminado: más incógnitas (cargas y posiciones) que ecuaciones",
+      "Imposible por superposición",
+      "Necesita una carga negativa obligatoria"
+    ],
+    "answer": 1,
+    "explanation": "4 incógnitas (dos magnitudes y dos posiciones) vs 2 componentes de fuerza.",
+    "microtarget": "Grados de libertad vs ecuaciones",
+    "level": "oli"
+  },
+  {
+    "q": "23. Dos +Q fijas; ¿dónde colocar −q para minimizar |F| sin anularla totalmente?",
+    "options": [
+      "En el centro (F ya es cero)",
+      "Desplazado ligeramente hacia un lado para reducir F",
+      "Muy cerca de una +Q",
+      "No existe mínimo distinto de F = 0: el centro es mínimo absoluto",
+      "En el infinito"
+    ],
+    "answer": 2,
+    "explanation": "El mínimo no nulo no existe; el centro da F = 0.",
+    "microtarget": "Análisis cualitativo de mínimos",
+    "level": "oli"
+  },
+  {
+    "q": "24. Propagación de error: incertidumbre relativa δr/r en r. Error relativo en F = kq₁q₂/r².",
+    "options": [
+      "|δF/F| ≈ 2|δr/r|",
+      "|δF/F| ≈ |δr/r|",
+      "|δF/F| ≈ (δr/r)²",
+      "|δF/F| ≈ (|δr/r|)/2",
+      "|δF/F| ≈ 0"
+    ],
+    "answer": 0,
+    "explanation": "dF/F = −2 dr/r ⇒ magnitud del error ≈ 2 δr/r.",
+    "microtarget": "Sensibilidad y errores experimentales",
+    "level": "oli"
+  },
+  {
+    "q": "25. Explica por qué un número finito de cargas puntuales no puede producir un campo perfectamente uniforme en un volumen grande.",
+    "options": [
+      "Porque las sumas de campos radiales 1/r² no pueden mantener magnitud y dirección constantes en todo el volumen",
+      "Porque k varía con la posición",
+      "Porque el vacío absorbe campo",
+      "Porque las cargas se anulan entre sí",
+      "Porque la ley de Coulomb falla a gran escala"
+    ],
+    "answer": 3,
+    "explanation": "Radialidad y dependencia 1/r² impiden constancia direccional extensa.",
+    "microtarget": "Limitaciones multipolares de configuraciones discretas",
+    "level": "oli"
+  },
+  {
+    "q": "26. Pequeño desplazamiento transversal de una carga desde el punto de equilibrio entre dos repulsiones iguales genera una fuerza:",
+    "options": [
+      "Lineal y restauradora",
+      "Proporcional al cuadrado del desplazamiento",
+      "Ausente; el equilibrio es inestable y la fuerza empuja fuera",
+      "Infinita",
+      "Constante en magnitud"
+    ],
+    "answer": 4,
+    "explanation": "El equilibrio es inestable: la fuerza no restaura.",
+    "microtarget": "Clasificación de equilibrio (inestable)",
+    "level": "oli"
+  },
+  {
+    "q": "27. Variación de energía potencial al mover +q de r a r+Δr frente a +Q (Δr pequeña, r≫Δr):",
+    "options": [
+      "ΔU ≈ −kQq (Δr)/r²",
+      "ΔU ≈ −2kQq (Δr)/r",
+      "ΔU ≈ kQq (Δr)/r",
+      "ΔU = 0",
+      "ΔU ≈ +kQq (Δr)/r²"
+    ],
+    "answer": 1,
+    "explanation": "dU = −F dr, con F = kQq/r² ⇒ dU = +kQq/r² Δr (alejándose) (colocada en índice 1).",
+    "microtarget": "Cálculo diferencial de U",
+    "level": "oli"
+  },
+  {
+    "q": "28. Hipotética ley F = k q₁q₂ / r³. Dimensionalmente:",
+    "options": [
+      "Incorrecta: produciría unidades de N/m",
+      "Correcta si k tiene unidades adecuadas; el potencial resultaría ∝ 1/r²",
+      "Genera obligatoriamente un campo uniforme",
+      "Implica flujo neto constante con r³",
+      "No afecta el principio de superposición"
+    ],
+    "answer": 2,
+    "explanation": "El exponente cambia: potencial resultante sería V ∝ 1/r² (opción índice 2).",
+    "microtarget": "Consecuencias de cambiar exponente",
+    "level": "oli"
+  },
+  {
+    "q": "29. Para medir k (constante de Coulomb) con mínimo error relativo se recomienda:",
+    "options": [
+      "Usar un arreglo altamente simétrico (por ejemplo, triángulo equilátero) que reduzca errores de alineación",
+      "Medir con cargas sin calibrar la distancia",
+      "Usar distancias extremadamente pequeñas sin control metrológico",
+      "Trabajar sólo con cargas opuestas",
+      "Variar la distancia al azar y promediar"
+    ],
+    "answer": 1,
+    "explanation": "La simetría promedia errores direccionales y centra la medición en la magnitud radial.",
+    "microtarget": "Diseño experimental optimizado",
+    "level": "oli"
+  },
+  {
+    "q": "30. Gauss + conservación de carga implican que el campo de un monopolo aislado debe decaer (al menos) como 1/r² porque:",
+    "options": [
+      "El potencial debe permanecer constante",
+      "k depende de r²",
+      "El flujo a través de esferas concéntricas crece como 4πr²; para flujo constante E debe ser ∝1/r²",
+      "Las cargas se destruyen con la distancia",
+      "La energía lo exige"
+    ],
+    "answer": 2,
+    "explanation": "Φ = E (4πr²) = Q/ε₀ ⇒ E ∝ 1/r².",
+    "microtarget": "Argumento de flujo esférico",
+    "level": "oli"
+  }
+];
+
 
 // NOTA:
 // Se introdujeron versiones intermedias (11, 28) ajustadas a 'Final'.
